@@ -16,16 +16,21 @@ export default class AccountService {
 	async signup (input: any) {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
 		try {
+			//deve gerar o account_id (uuid)
 			const accountId = crypto.randomUUID();
+			//deve gerar o código de verificação da conta
 			const verificationCode = crypto.randomUUID();
 			const date = new Date();
+			//deve verificar se o email já existe e lançar um erro caso já exista
 			const [existingAccount] = await connection.query("select * from cccat13.account where email = $1", [input.email]);
 			if (existingAccount) throw new Error("Account already exists");
+			//deve validar o nome, email e cpf
 			if (!input.name.match(/[a-zA-Z] [a-zA-Z]+/)) throw new Error("Invalid name");
 			if (!input.email.match(/^(.+)@(.+)$/)) throw new Error("Invalid email");
 			if (!this.cpfValidator.validate(input.cpf)) throw new Error("Invalid cpf");
 			if (input.isDriver && !input.carPlate.match(/[A-Z]{3}[0-9]{4}/)) throw new Error("Invalid plate");
 			await connection.query("insert into cccat13.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver, date, is_verified, verification_code) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)", [accountId, input.name, input.email, input.cpf, input.carPlate, !!input.isPassenger, !!input.isDriver, date, false, verificationCode]);
+			//deve enviar um email de verificação da conta com um link contendo o código (por enquanto usando um console.log)
 			await this.sendEmail(input.email, "Verification", `Please verify your code at first login ${verificationCode}`);
 			return {
 				accountId
