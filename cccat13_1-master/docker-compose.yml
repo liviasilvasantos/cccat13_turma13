@@ -1,0 +1,22 @@
+#Para Desenvolvimento LOCAL
+version: '3.7'
+
+services:
+  database_clean_code_clean_architecture:
+    image: postgres
+    container_name: db_clean_code_clean_architecture
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=app
+      - POSTGRES_HOST=localhost
+      - POSTGRES_PORT=5432
+    volumes:
+      - pgdata:/data/postgres
+
+volumes:
+  pgdata:
+    driver: local
