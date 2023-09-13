@@ -40,7 +40,7 @@ test("Não deve solicitar uma corrida quando a conta não for de um passageiro",
 	await expect(() => rideService.requestRide(input)).rejects.toThrow(new Error("account is not passenger"));
 });
 
-test.only("Não deve solicitar uma corrida quando já existir uma corrida para o passageiro", async function () {
+test("Não deve solicitar uma corrida quando já existir uma corrida para o passageiro", async function () {
 	const inputAccount = {
 		name: "Sarah Doe",
 		email: `sarah.doe${Math.random()}@gmail.com`,
