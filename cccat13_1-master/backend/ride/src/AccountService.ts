@@ -44,6 +44,7 @@ export default class AccountService {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
 		const [account] = await connection.query("select * from cccat13.account where account_id = $1", [accountId]);
 		await connection.$pool.end();
+		
 		return account;
 	}
 }

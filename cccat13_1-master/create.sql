@@ -14,3 +14,14 @@ create table cccat13.account (
 	is_verified boolean,
 	verification_code uuid
 );
+
+create table cccat13.ride (
+	ride_id uuid,
+	account_id text,
+	from_lat float,
+	from_lng float,
+	to_lat float,
+	to_lng float,
+	date timestamp,
+	status text
+);
