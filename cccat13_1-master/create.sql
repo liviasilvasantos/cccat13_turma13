@@ -15,13 +15,16 @@ create table cccat13.account (
 	verification_code uuid
 );
 
-create table cccat13.ride (
+create table cccat13.ride ( 
 	ride_id uuid,
-	account_id text,
-	from_lat float,
-	from_lng float,
-	to_lat float,
-	to_lng float,
-	date timestamp,
-	status text
+	passenger_id uuid, 
+	driver_id uuid, 
+	status text,
+	fare numeric, 
+	distance numeric, 
+	from_lat numeric, 
+	from_lng numeric, 
+	to_lat numeric, 
+	to_lng numeric, 
+	date timestamp
 );
