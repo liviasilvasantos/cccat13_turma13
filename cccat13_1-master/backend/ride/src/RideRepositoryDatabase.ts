@@ -13,6 +13,13 @@ export default class RideRepositoryDatabase implements RideRepository {
 		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.from.lat, ride.from.lng, ride.to.lat, ride.to.lng, ride.status, ride.date, ride.driverId]);
 		await connection.$pool.end();
 	}
+
+	async update(ride: any): Promise<void> {
+		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
+		await connection.query("update cccat13.ride set driver_id = $1, status = $2 where ride_id = $3", [ride.driverId, ride.status, ride.rideId]);
+		await connection.$pool.end();
+	}
+
 	
 	async getById(rideId: string): Promise<any> {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");

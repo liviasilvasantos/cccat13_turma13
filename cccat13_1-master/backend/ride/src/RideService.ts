@@ -30,9 +30,13 @@ export default class RideService {
         if (existsActiveRides) {
             throw new Error("active ride already exists")
         }
-        // * deve associar o driver_id na corrida
-        // * deve mudar o status para "accepted"
 
+        const rideUpdate = {
+            driverId: ride.driver_id, 
+            status: "accepted", 
+            rideId: ride.ride_id
+        }
+        await this.rideRepository.update(rideUpdate);
         return;
     }
 
