@@ -2,19 +2,18 @@ import crypto from "crypto";
 import CpfValidator from "./CpfValidator";
 import AccountRepository from "./AccountRepository";
 import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
+import MailGateway from "./MailGateway";
 
 export default class AccountService {
 	cpfValidator: CpfValidator;
 	accountRepository: AccountRepository;
+	mailGateway: MailGateway;
 
 	constructor() {
 		this.cpfValidator = new CpfValidator();
 		this.accountRepository = new AccountRepositoryDatabase();
-	}
-
-	async sendEmail(email: string, subject: string, message: string) {
-		console.log(email, subject, message);
-	}
+		this.mailGateway = new MailGateway();
+	}	
 
 	async signup(input: any) {
 		const accountId = crypto.randomUUID();
@@ -35,7 +34,7 @@ export default class AccountService {
 		input.date = date;
 		await this.accountRepository.save(input);
 
-		await this.sendEmail(input.email, "Verification", `Please verify your code at first login ${verificationCode}`);
+		await this.mailGateway.sendEmail(input.email, "Verification", `Please verify your code at first login ${verificationCode}`);
 		return {
 			accountId
 		}
