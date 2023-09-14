@@ -1,14 +1,17 @@
 import RideService from "../src/RideService";
 import AccountService from "../src/AccountService";
+import crypto from "crypto";
 
-const createAccount = async function (isPassenger: boolean, isDriver: boolean = false) {
+const createAccount = async function (isPassenger: boolean) {
 	const inputAccount = {
 		name: "Sarah Doe",
 		email: `sarah.doe${Math.random()}@gmail.com`,
 		cpf: "95818705552",
 		isPassenger: isPassenger,
-		isDriver: isDriver
+		isDriver: !isPassenger,
+		carPlate: "AAA9999"
 	}
+	
 	const accountService = new AccountService();
 	const output = await accountService.signup(inputAccount);
 	const account = await accountService.getAccount(output.accountId);
@@ -83,8 +86,83 @@ test("Não deve solicitar uma corrida quando já existir uma corrida para o pass
 });
 
 test("Não deve aceitar uma corrida quando a conta não for de um motorista", async function () {
-	const account = await createAccount(false);
-
+	const passenger = await createAccount(true);
+	
 	const rideService = new RideService();
-	await expect(() => rideService.acceptRide(account.account_id)).rejects.toThrow(new Error("account is not driver"));
+	const input = {
+		driverId: passenger.account_id,
+		rideId: crypto.randomUUID
+	}
+	await expect(() => rideService.acceptRide(input)).rejects.toThrow(new Error("account is not driver"));
+});
+
+test("Não deve aceitar uma corrida se o status não é requested", async function () {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "completed"
+	}
+	const rideService = new RideService();
+	const output = await rideService.saveRide(input);
+
+	const inputAccept = {
+		driverId: driver.account_id,
+		rideId: output.rideId
+	}
+	await expect(() => rideService.acceptRide(inputAccept)).rejects.toThrow(new Error("ride is not requested"));
+});
+
+
+test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", async function () {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+	const rideService = new RideService();
+
+	const inputActiveRide = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "in_progress"
+	}
+	await rideService.saveRide(inputActiveRide);
+
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "requested"
+	}
+	
+	const output = await rideService.saveRide(input);
+
+	const inputAccept = {
+		driverId: driver.account_id,
+		rideId: output.rideId
+	}
+	await expect(() => rideService.acceptRide(inputAccept)).rejects.toThrow(new Error("active ride already exists"));
 });

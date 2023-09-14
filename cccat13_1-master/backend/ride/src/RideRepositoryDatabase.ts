@@ -10,7 +10,7 @@ export default class RideRepositoryDatabase implements RideRepository {
 	
 	async save (ride: any) {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
-		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date) values ($1, $2, $3, $4, $5, $6, $7, $8)", [ride.rideId, ride.passengerId, ride.from.lat, ride.from.lng, ride.to.lat, ride.to.lng, ride.status, ride.date]);
+		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.from.lat, ride.from.lng, ride.to.lat, ride.to.lng, ride.status, ride.date, ride.driverId]);
 		await connection.$pool.end();
 	}
 	

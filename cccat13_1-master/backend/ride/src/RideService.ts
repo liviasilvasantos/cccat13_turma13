@@ -1,6 +1,5 @@
 import AccountService from "./AccountService";
 import crypto from "crypto";
-import pgp from "pg-promise";
 import RideRepository from "./RideRepository";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
 
@@ -13,16 +12,24 @@ export default class RideService {
         this.accountService = new AccountService();
     }
 
-    async acceptRide(driver_id: string) {
-        const account = await this.accountService.getAccount(driver_id);
+    async acceptRide(input: any) {
+        const account = await this.accountService.getAccount(input.driverId);
 
-        // deve verificar se o account_id tem is_driver true
         if (!account.is_driver) {
             throw new Error("account is not driver");
         }
 
-        // * deve verificar se o status da corrida é "requested", se não for, lançar um erro
-        // * deve verificar se o motorista já tem outra corrida com status "accepted" ou "in_progress", se tiver lançar um erro
+        const ride = await this.getRide(input.rideId);
+        console.log('ride', ride);
+        
+        if (ride.status !== "requested") {
+            throw new Error("ride is not requested");
+        }
+
+        const existsActiveRides = await this.rideRepository.existsActiveRidesByDriverId(ride.driver_id);
+        if (existsActiveRides) {
+            throw new Error("active ride already exists")
+        }
         // * deve associar o driver_id na corrida
         // * deve mudar o status para "accepted"
 
@@ -36,17 +43,34 @@ export default class RideService {
             throw new Error("account is not passenger");
         }
 
-        const existOpenRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
-        if (existOpenRides) {
+        const existsActiveRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
+        if (existsActiveRides) {
             throw new Error(`already exist open ride for passenger id ${input.passengerId}`);
         }
 
-        const rideId = crypto.randomUUID();
+        const ride = {
+            status: "requested",
+            passengerId: input.passengerId,
+            from: input.from,
+            to: input.to
+        }
 
-        input.rideId = rideId;
-        input.status = "requested";
-        input.date = new Date();
-        await this.rideRepository.save(input);
+        return await this.saveRide(ride);
+    }
+
+    async saveRide(input: any) {
+        const rideId = crypto.randomUUID();
+        const ride = {
+            rideId,
+            status: input.status,
+            date: new Date(),
+            passengerId: input.passengerId,
+            driverId: input.driverId,
+            from: input.from,
+            to: input.to
+        }
+
+        await this.rideRepository.save(ride);
         return { rideId };
     }
 
