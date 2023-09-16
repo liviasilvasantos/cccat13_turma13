@@ -167,7 +167,7 @@ test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", asy
 	await expect(() => rideService.acceptRide(inputAccept)).rejects.toThrow(new Error("active ride already exists"));
 });
 
-test.only("Deve alterar status quando corrida é aceita", async function () {
+test("Deve alterar status quando corrida é aceita", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
 	const rideService = new RideService();
