@@ -25,3 +25,8 @@ Expectativa de comportamento no teste.
 
 mock = manipula um comportamento específico, e verifica se aconteceu o que você determinou pro mock (stub + spy).
 Expectativa de comportamento na criação do mock.
+
+## hexagonal x clean arch
+
+toda clean arch é hexagonal.  
+mas nem toda hexagona é clean arch.
