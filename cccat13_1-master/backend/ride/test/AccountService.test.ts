@@ -2,6 +2,7 @@ import AccountRepositoryDatabase from "../src/AccountRepositoryDatabase";
 import AccountService from "../src/AccountService";
 import sinon from "sinon";
 import MailGateway from "../src/MailGateway";
+import AccountRepositoryMemory from "../src/AccountRepositoryMemory";
 
 test("Deve criar um passageiro", async function () {
 	const input:any = {
@@ -181,4 +182,22 @@ test("Deve criar um passageiro com mock", async function () {
 	stubGetById.restore();
 	stubSave.restore();
 	mock.restore();
+});
+
+test("Deve criar um passageiro com fake", async function () {
+	const accountRepository = new AccountRepositoryMemory();
+	const input:any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const accountService = new AccountService(accountRepository);
+	const output = await accountService.signup(input);
+	const account = await accountService.getAccount(output.accountId);
+
+	expect(account.account_id).toBeDefined();
+	expect(account.name).toBe(input.name);
+	expect(account.email).toBe(input.email);
+	expect(account.cpf).toBe(input.cpf);
 });

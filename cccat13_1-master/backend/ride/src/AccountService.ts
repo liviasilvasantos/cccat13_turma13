@@ -6,12 +6,10 @@ import MailGateway from "./MailGateway";
 
 export default class AccountService {
 	cpfValidator: CpfValidator;
-	accountRepository: AccountRepository;
 	mailGateway: MailGateway;
 
-	constructor() {
+	constructor(readonly accountRepository: AccountRepository = new AccountRepositoryDatabase()) {
 		this.cpfValidator = new CpfValidator();
-		this.accountRepository = new AccountRepositoryDatabase();
 		this.mailGateway = new MailGateway();
 	}
 
