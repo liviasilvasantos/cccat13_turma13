@@ -98,20 +98,24 @@ test("Deve criar um passageiro com stub", async function () {
 		cpf: "95818705552",
 		isPassenger: true
 	}
-	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
-	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
 	input.account_id = output.accountId;
-	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const sutbGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
 	const account = await accountService.getAccount(output.accountId);
 
 	expect(account.account_id).toBeDefined();
 	expect(account.name).toBe(input.name);
 	expect(account.email).toBe(input.email);
 	expect(account.cpf).toBe(input.cpf);
+
+	sutbGetById.restore();
+	stubGetByEmail.restore();
+	stubSave.restore();
 });
 
 test("Deve criar um passageiro com spy", async function () {
@@ -123,14 +127,14 @@ test("Deve criar um passageiro com spy", async function () {
 	}
 
 	const spy = sinon.spy(MailGateway.prototype, "send");
-	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
-	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
 	input.account_id = output.accountId;
-	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
 	const account = await accountService.getAccount(output.accountId);
 
 	expect(account.account_id).toBeDefined();
@@ -139,6 +143,11 @@ test("Deve criar um passageiro com spy", async function () {
 	expect(account.cpf).toBe(input.cpf);
 
 	expect(spy.calledOnce).toBeTruthy();
+
+	stubGetByEmail.restore();
+	stubGetById.restore();
+	stubSave.restore();
+	spy.restore();
 });
 
 test("Deve criar um passageiro com mock", async function () {
@@ -151,14 +160,14 @@ test("Deve criar um passageiro com mock", async function () {
 	const mock = sinon.mock(MailGateway.prototype);
 	mock.expects("send").withArgs(input.email, "Verification").calledOnce;
 
-	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
-	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
 	input.account_id = output.accountId;
-	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
 	const account = await accountService.getAccount(output.accountId);
 
 	expect(account.account_id).toBeDefined();
@@ -167,4 +176,9 @@ test("Deve criar um passageiro com mock", async function () {
 	expect(account.cpf).toBe(input.cpf);
 
 	mock.verify();
+
+	stubGetByEmail.restore();
+	stubGetById.restore();
+	stubSave.restore();
+	mock.restore();
 });
