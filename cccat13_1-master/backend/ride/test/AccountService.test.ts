@@ -1,7 +1,10 @@
+import AccountRepositoryDatabase from "../src/AccountRepositoryDatabase";
 import AccountService from "../src/AccountService";
+import sinon from "sinon";
+import MailGateway from "../src/MailGateway";
 
 test("Deve criar um passageiro", async function () {
-	const input = {
+	const input:any = {
 		name: "John Doe",
 		email: `john.doe${Math.random()}@gmail.com`,
 		cpf: "95818705552",
@@ -85,4 +88,83 @@ test("Não deve criar um motorista com place do carro inválida", async function
 	}
 	const accountService = new AccountService();
 	await expect(() => accountService.signup(input)).rejects.toThrow(new Error("Invalid plate"));
+});
+
+
+test("Deve criar um passageiro com stub", async function () {
+	const input:any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+
+	const accountService = new AccountService();
+	const output = await accountService.signup(input);
+
+	input.account_id = output.accountId;
+	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const account = await accountService.getAccount(output.accountId);
+
+	expect(account.account_id).toBeDefined();
+	expect(account.name).toBe(input.name);
+	expect(account.email).toBe(input.email);
+	expect(account.cpf).toBe(input.cpf);
+});
+
+test("Deve criar um passageiro com spy", async function () {
+	const input:any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+
+	const spy = sinon.spy(MailGateway.prototype, "send");
+	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+
+	const accountService = new AccountService();
+	const output = await accountService.signup(input);
+
+	input.account_id = output.accountId;
+	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const account = await accountService.getAccount(output.accountId);
+
+	expect(account.account_id).toBeDefined();
+	expect(account.name).toBe(input.name);
+	expect(account.email).toBe(input.email);
+	expect(account.cpf).toBe(input.cpf);
+
+	expect(spy.calledOnce).toBeTruthy();
+});
+
+test("Deve criar um passageiro com mock", async function () {
+	const input:any = {
+		name: "John Doe",
+		email: `john.doe${Math.random()}@gmail.com`,
+		cpf: "95818705552",
+		isPassenger: true
+	}
+	const mock = sinon.mock(MailGateway.prototype);
+	mock.expects("send").withArgs(input.email, "Verification").calledOnce;
+
+	sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
+	sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
+
+	const accountService = new AccountService();
+	const output = await accountService.signup(input);
+
+	input.account_id = output.accountId;
+	sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const account = await accountService.getAccount(output.accountId);
+
+	expect(account.account_id).toBeDefined();
+	expect(account.name).toBe(input.name);
+	expect(account.email).toBe(input.email);
+	expect(account.cpf).toBe(input.cpf);
+
+	mock.verify();
 });

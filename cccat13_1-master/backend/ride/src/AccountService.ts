@@ -40,8 +40,7 @@ export default class AccountService {
 			carPlate: input.carPlate
 		}
 		await this.accountRepository.save(account);
-
-		await this.mailGateway.sendEmail(input.email, "Verification", `Please verify your code at first login ${verificationCode}`);
+		await this.mailGateway.send(input.email, "Verification", `Please verify your code at first login ${verificationCode}`);
 		return {
 			accountId
 		}
