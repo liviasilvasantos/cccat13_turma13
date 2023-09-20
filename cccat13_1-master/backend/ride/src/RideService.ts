@@ -4,11 +4,9 @@ import RideRepository from "./RideRepository";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
 
 export default class RideService {
-    rideRepository: RideRepository;
     accountService: AccountService;
 
-    constructor() {
-        this.rideRepository = new RideRepositoryDatabase();
+    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase()) {
         this.accountService = new AccountService();
     }
 
