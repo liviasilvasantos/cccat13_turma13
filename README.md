@@ -32,3 +32,9 @@ mas nem toda hexagona é clean arch.
 # aula 3
 
 Github: https://github.com/rodrigobranas/cccat13_3
+
+# Artigos
+
+https://khalilstemmler.com/articles/software-design-architecture/domain-driven-design-vs-clean-architecture/
+
+https://codesoapbox.dev/ports-adapters-aka-hexagonal-architecture-explained/
