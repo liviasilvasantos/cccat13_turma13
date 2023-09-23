@@ -2,12 +2,14 @@ import AccountService from "./AccountService";
 import crypto from "crypto";
 import RideRepository from "./RideRepository";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
+import PositionRepository from "./PositionRepository";
+import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
 
 export default class RideService {
-	
-    accountService: AccountService;
+	accountService: AccountService;
 
-    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase()) {
+    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(), 
+        readonly positionRepository: PositionRepository = new PositionRepositoryDatabase()) {
         this.accountService = new AccountService();
     }
 
@@ -88,17 +90,26 @@ export default class RideService {
     async startRide(rideId: string) {
 		const ride = await this.getRide(rideId);
         if(ride.status !== "accepted") throw new Error("Ride is not accepted");
-        console.log('ride', ride);
         
         const updateRide = {
             driverId: ride.driver_id,
             rideId: ride.ride_id,
             status: "in_progress"
         }
-        console.log('updateRide', updateRide);
         
         this.rideRepository.update(updateRide);
         return;
-	}
+    }
 
+    async updatePosition(position: any) {
+		const ride = await this.getRide(position.rideId);
+        if(ride.status !== "in_progress") throw new Error("Ride is not in progress");
+
+        const positionId = crypto.randomUUID();
+        position.positionId = positionId;
+        position.date = new Date();
+        await this.positionRepository.save(position);
+
+        return { positionId }
+	}
 }
