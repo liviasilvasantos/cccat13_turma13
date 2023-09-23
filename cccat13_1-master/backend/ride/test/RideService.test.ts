@@ -198,3 +198,56 @@ test("Deve alterar status quando corrida é aceita", async function () {
 	expect(ride.status).toBe("accepted");
 	expect(ride.driver_id).toBe(driver.account_id);
 });
+
+test.only("Deve iniciar uma corrida", async function () {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+
+	const rideService = new RideService();
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "accepted"
+	}
+	
+	const output = await rideService.saveRide(input);
+
+	await rideService.startRide(output.rideId);
+
+	const ride = await rideService.getRide(output.rideId);
+	expect(ride.status).toBe("in_progress");
+
+});
+
+test.only("Deve iniciar uma corrida", async function () {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+
+	const rideService = new RideService();
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "requested"
+	}
+	
+	const output = await rideService.saveRide(input);
+
+	await expect(() => rideService.startRide(output.rideId)).rejects.toThrow(new Error("Ride is not accepted"));
+
+});

@@ -4,6 +4,7 @@ import RideRepository from "./RideRepository";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
 
 export default class RideService {
+	
     accountService: AccountService;
 
     constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase()) {
@@ -83,5 +84,21 @@ export default class RideService {
     async getRide(rideId: string) {
         return this.rideRepository.getById(rideId);
     }
+
+    async startRide(rideId: string) {
+		const ride = await this.getRide(rideId);
+        if(ride.status !== "accepted") throw new Error("Ride is not accepted");
+        console.log('ride', ride);
+        
+        const updateRide = {
+            driverId: ride.driver_id,
+            rideId: ride.ride_id,
+            status: "in_progress"
+        }
+        console.log('updateRide', updateRide);
+        
+        this.rideRepository.update(updateRide);
+        return;
+	}
 
 }
