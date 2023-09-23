@@ -280,9 +280,9 @@ test("Deve atualizar a posição da corrida", async function () {
 	}
 	const outputPosition = await rideService.updatePosition(position);
 	expect(outputPosition.positionId).toBeDefined();
-})
+});
 
-test("Deve falhar ao atualizar posição se a corrida não estiver em andamento", async function () {
+test("Não deve atualizar posição se a corrida não estiver em andamento", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
 
@@ -310,4 +310,55 @@ test("Deve falhar ao atualizar posição se a corrida não estiver em andamento"
 	}
 
 	await expect(() => rideService.updatePosition(position)).rejects.toThrow(new Error("Ride is not in progress"));
+});
+
+test("Deve finalizar corrida", async function() {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+
+	const rideService = new RideService();
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "in_progress"
+	}
+	
+	const output = await rideService.saveRide(input);
+
+	await rideService.finishRide(output.rideId);
+
+	const outputRide = await rideService.getRide(output.rideId);
+	expect(outputRide.status).toBe("completed");
+});
+
+test("Não deve finalizar corrida se não estiver em andamento", async function () {
+	const driver = await createAccount(false);
+	const passenger = await createAccount(true);
+
+	const rideService = new RideService();
+	const input = {
+		passengerId: passenger.account_id,
+		driverId: driver.account_id,
+		from: {
+			lat: -22.818439,
+			lng: -47.064721,
+		},
+		to: {
+			lat: -22.847566,
+			lng: -47.063104
+		},
+		status: "accepcted"
+	}
+	
+	const output = await rideService.saveRide(input);
+
+	await expect(() => rideService.finishRide(output.rideId)).rejects.toThrow(new Error("Ride is not in progress"));
 })

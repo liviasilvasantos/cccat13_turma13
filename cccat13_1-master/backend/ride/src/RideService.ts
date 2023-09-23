@@ -6,6 +6,7 @@ import PositionRepository from "./PositionRepository";
 import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
 
 export default class RideService {
+	
 	accountService: AccountService;
 
     constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(), 
@@ -35,7 +36,9 @@ export default class RideService {
         const rideUpdate = {
             driverId: ride.driver_id, 
             status: "accepted", 
-            rideId: ride.ride_id
+            rideId: ride.ride_id, 
+            distance: null,
+            fare: null
         }
         await this.rideRepository.update(rideUpdate);
         return;
@@ -94,7 +97,9 @@ export default class RideService {
         const updateRide = {
             driverId: ride.driver_id,
             rideId: ride.ride_id,
-            status: "in_progress"
+            status: "in_progress", 
+            distance: null,
+            fare: null
         }
         
         this.rideRepository.update(updateRide);
@@ -111,5 +116,20 @@ export default class RideService {
         await this.positionRepository.save(position);
 
         return { positionId }
+	}
+
+    async finishRide(rideId: string) {
+		const ride = await this.getRide(rideId);
+        if(ride.status !== "in_progress") throw new Error("Ride is not in progress");
+
+        const rideUpdate = {
+            driverId: ride.driver_id, 
+            status: "completed", 
+            rideId: ride.ride_id,
+            distance: 22.55,
+            fare: 14.50
+        }
+        await this.rideRepository.update(rideUpdate);
+        return;
 	}
 }

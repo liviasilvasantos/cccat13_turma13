@@ -16,7 +16,7 @@ export default class RideRepositoryDatabase implements RideRepository {
 
 	async update(ride: any): Promise<void> {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
-		await connection.query("update cccat13.ride set driver_id = $1, status = $2 where ride_id = $3", [ride.driverId, ride.status, ride.rideId]);
+		await connection.query("update cccat13.ride set driver_id = $1, status = $2, distance = $3, fare = $4 where ride_id = $5", [ride.driverId, ride.status, ride.distance, ride.fare, ride.rideId]);
 		await connection.$pool.end();
 	}
 
