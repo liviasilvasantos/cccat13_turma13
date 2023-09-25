@@ -33,6 +33,12 @@ mas nem toda hexagona é clean arch.
 
 Github: https://github.com/rodrigobranas/cccat13_3
 
+clean arch: desacoplamento entre as regras de negócio (domínio) da aplicação e os recursos externos como frameworks e banco de dados.
+
+Entities > Use Cases > Controllers/Gateways/Presenters > Web/UI/Devices/DB/External Interfaces
+
+Domain: cojunto de dados e comportamento
+
 # Artigos
 
 https://khalilstemmler.com/articles/software-design-architecture/domain-driven-design-vs-clean-architecture/
