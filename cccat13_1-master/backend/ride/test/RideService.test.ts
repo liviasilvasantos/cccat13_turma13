@@ -1,6 +1,7 @@
 import RideService from "../src/RideService";
 import AccountService from "../src/AccountService";
 import crypto from "crypto";
+import Ride from "../src/Ride";
 
 const createAccount = async function (isPassenger: boolean) {
 	const inputAccount = {
@@ -11,7 +12,7 @@ const createAccount = async function (isPassenger: boolean) {
 		isDriver: !isPassenger,
 		carPlate: "AAA9999"
 	}
-	
+
 	const accountService = new AccountService();
 	const output = await accountService.signup(inputAccount);
 	const account = await accountService.getAccount(output.accountId);
@@ -23,25 +24,21 @@ test("Deve solicitar uma corrida com status requested", async function () {
 
 	const input = {
 		passengerId: account.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		}
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104
 	}
 	const rideService = new RideService();
 	const output = await rideService.requestRide(input);
 
 	const ride = await rideService.getRide(output.rideId);
-	expect(ride.status).toBe("requested");
-	expect(ride.passenger_id).toBe(input.passengerId);
-	expect(ride.from_lat).toBe(input.from.lat.toString());
-	expect(ride.from_lng).toBe(input.from.lng.toString());
-	expect(ride.to_lat).toBe(input.to.lat.toString());
-	expect(ride.to_lng).toBe(input.to.lng.toString());
+	expect(ride.getStatus()).toBe("requested");
+	expect(ride.passengerId).toBe(input.passengerId);
+	expect(ride.fromLat).toBe(input.fromLat.toString());
+	expect(ride.fromLong).toBe(input.fromLong.toString());
+	expect(ride.toLat).toBe(input.toLat.toString());
+	expect(ride.toLong).toBe(input.toLong.toString());
 });
 
 test("Não deve solicitar uma corrida quando a conta não for de um passageiro", async function () {
@@ -49,14 +46,10 @@ test("Não deve solicitar uma corrida quando a conta não for de um passageiro",
 
 	const input = {
 		passengerId: account.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		}
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104
 	}
 	const rideService = new RideService();
 	await expect(() => rideService.requestRide(input)).rejects.toThrow(new Error("account is not passenger"));
@@ -67,14 +60,10 @@ test("Não deve solicitar uma corrida quando já existir uma corrida para o pass
 
 	const input = {
 		passengerId: account.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		}
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104
 	}
 	const rideService = new RideService();
 	await rideService.requestRide(input);
@@ -87,7 +76,7 @@ test("Não deve solicitar uma corrida quando já existir uma corrida para o pass
 
 test("Não deve aceitar uma corrida quando a conta não for de um motorista", async function () {
 	const passenger = await createAccount(true);
-	
+
 	const rideService = new RideService();
 	const input = {
 		driverId: passenger.account_id,
@@ -103,18 +92,16 @@ test("Não deve aceitar uma corrida se o status não é requested", async functi
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "completed"
 	}
 	const rideService = new RideService();
-	const output = await rideService.saveRide(input);
+	const ride = Ride.save(input.passengerId, input.driverId, "completed", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	const inputAccept = {
 		driverId: driver.account_id,
@@ -132,33 +119,30 @@ test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", asy
 	const inputActiveRide = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "in_progress"
 	}
-	await rideService.saveRide(inputActiveRide);
+	const rideActive = Ride.save(inputActiveRide.passengerId, inputActiveRide.driverId, "in_progress",
+		inputActiveRide.fromLat, inputActiveRide.fromLong,
+		inputActiveRide.toLat, inputActiveRide.toLong);
+	await rideService.saveRide(rideActive);
 
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "requested"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.create(input.passengerId, input.driverId, input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	const inputAccept = {
 		driverId: driver.account_id,
@@ -175,18 +159,16 @@ test("Deve alterar status quando corrida é aceita", async function () {
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "requested"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const rideRequested = Ride.create(input.passengerId, input.driverId, input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(rideRequested);
 
 	const inputAccept = {
 		driverId: driver.account_id,
@@ -195,8 +177,8 @@ test("Deve alterar status quando corrida é aceita", async function () {
 	await rideService.acceptRide(inputAccept);
 
 	const ride = await rideService.getRide(output.rideId);
-	expect(ride.status).toBe("accepted");
-	expect(ride.driver_id).toBe(driver.account_id);
+	expect(ride.getStatus()).toBe("accepted");
+	expect(ride.driverId).toBe(driver.account_id);
 });
 
 test("Deve iniciar uma corrida", async function () {
@@ -207,23 +189,21 @@ test("Deve iniciar uma corrida", async function () {
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "accepted"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const rideAccepted = Ride.save(input.passengerId, input.driverId, "accepted", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(rideAccepted);
 
 	await rideService.startRide(output.rideId);
 
 	const ride = await rideService.getRide(output.rideId);
-	expect(ride.status).toBe("in_progress");
+	expect(ride.getStatus()).toBe("in_progress");
 
 });
 
@@ -235,18 +215,16 @@ test("Deve falhar ao iniciar uma corrida que não está aceita", async function 
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "requested"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.create(input.passengerId, input.driverId, input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	await expect(() => rideService.startRide(output.rideId)).rejects.toThrow(new Error("Ride is not accepted"));
 
@@ -260,18 +238,16 @@ test("Deve atualizar a posição da corrida", async function () {
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "in_progress"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.save(input.passengerId, input.driverId, "in_progress", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	const position = {
 		rideId: output.rideId,
@@ -290,18 +266,16 @@ test("Não deve atualizar posição se a corrida não estiver em andamento", asy
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "accepcted"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.save(input.passengerId, input.driverId, "accepcted", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	const position = {
 		rideId: output.rideId,
@@ -312,7 +286,7 @@ test("Não deve atualizar posição se a corrida não estiver em andamento", asy
 	await expect(() => rideService.updatePosition(position)).rejects.toThrow(new Error("Ride is not in progress"));
 });
 
-test("Deve finalizar corrida", async function() {
+test("Deve finalizar corrida", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
 
@@ -320,23 +294,21 @@ test("Deve finalizar corrida", async function() {
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "in_progress"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.save(input.passengerId, input.driverId, "in_progress", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	await rideService.finishRide(output.rideId);
 
 	const outputRide = await rideService.getRide(output.rideId);
-	expect(outputRide.status).toBe("completed");
+	expect(outputRide.getStatus()).toBe("completed");
 });
 
 test("Não deve finalizar corrida se não estiver em andamento", async function () {
@@ -347,18 +319,16 @@ test("Não deve finalizar corrida se não estiver em andamento", async function 
 	const input = {
 		passengerId: passenger.account_id,
 		driverId: driver.account_id,
-		from: {
-			lat: -22.818439,
-			lng: -47.064721,
-		},
-		to: {
-			lat: -22.847566,
-			lng: -47.063104
-		},
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104,
 		status: "accepcted"
 	}
-	
-	const output = await rideService.saveRide(input);
+
+	const ride = Ride.save(input.passengerId, input.driverId, "accepcted", input.fromLat, input.fromLong,
+		input.toLat, input.toLong);
+	const output = await rideService.saveRide(ride);
 
 	await expect(() => rideService.finishRide(output.rideId)).rejects.toThrow(new Error("Ride is not in progress"));
 })

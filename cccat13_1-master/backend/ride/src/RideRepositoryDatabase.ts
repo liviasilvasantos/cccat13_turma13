@@ -2,15 +2,16 @@
 // adapter
 import pgp from "pg-promise";
 import RideRepository from "./RideRepository";
+import Ride from "./Ride";
 
 export default class RideRepositoryDatabase implements RideRepository {
 
 	constructor () {
 	}
 	
-	async save (ride: any) {
+	async save (ride: Ride) {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
-		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.from.lat, ride.from.lng, ride.to.lat, ride.to.lng, ride.status, ride.date, ride.driverId]);
+		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.fromLat, ride.fromLong, ride.toLat, ride.toLong, ride.getStatus(), ride.date, ride.driverId]);
 		await connection.$pool.end();
 	}
 
@@ -19,13 +20,12 @@ export default class RideRepositoryDatabase implements RideRepository {
 		await connection.query("update cccat13.ride set driver_id = $1, status = $2, distance = $3, fare = $4 where ride_id = $5", [ride.driverId, ride.status, ride.distance, ride.fare, ride.rideId]);
 		await connection.$pool.end();
 	}
-
 	
-	async getById(rideId: string): Promise<any> {
+	async getById(rideId: string): Promise<Ride> {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
 		const [rideData] = await connection.query("select * from cccat13.ride where ride_id = $1", [rideId]);
 		await connection.$pool.end();
-		return rideData;
+		return Ride.restore(rideData.ride_id, rideData.passenger_id, rideData.driver_id, rideData.status, rideData.from_lat, rideData.from_lng, rideData.to_lat, rideData.to_lng, rideData.date);
 	}
 
 	async existsActiveRidesByPassengerId(passengerId: string): Promise<boolean> {
