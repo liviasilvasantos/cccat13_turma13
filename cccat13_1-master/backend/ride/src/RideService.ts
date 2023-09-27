@@ -5,6 +5,7 @@ import RideRepositoryDatabase from "./RideRepositoryDatabase";
 import PositionRepository from "./PositionRepository";
 import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
 import Ride from "./Ride";
+import { validate as validateUUID } from "uuid";
 
 export default class RideService {
 
@@ -16,6 +17,8 @@ export default class RideService {
     }
 
     async requestRide(input: any) {
+        if (!validateUUID(input.passengerId)) { throw new Error("account does not exists"); }
+
         const account = await this.accountService.getAccount(input.passengerId);
 
         if (!account.is_passenger) { throw new Error("account is not passenger"); }
@@ -33,7 +36,7 @@ export default class RideService {
         if (!account.is_driver) { throw new Error("account is not driver"); }
 
         const ride = await this.getRide(input.rideId);
-        
+
         if (ride.getStatus() !== "requested") { throw new Error("ride is not requested"); }
 
         if (!ride.driverId) { throw new Error("driver id is empty") }

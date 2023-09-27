@@ -20,6 +20,7 @@ const createAccount = async function (isPassenger: boolean) {
 }
 
 test("Deve solicitar uma corrida com status requested", async function () {
+	//given
 	const account = await createAccount(true);
 
 	const input = {
@@ -29,9 +30,12 @@ test("Deve solicitar uma corrida com status requested", async function () {
 		toLat: -22.847566,
 		toLong: -47.063104
 	}
+
+	//when
 	const rideService = new RideService();
 	const output = await rideService.requestRide(input);
 
+	//then
 	const ride = await rideService.getRide(output.rideId);
 	expect(ride.getStatus()).toBe("requested");
 	expect(ride.passengerId).toBe(input.passengerId);
@@ -40,6 +44,22 @@ test("Deve solicitar uma corrida com status requested", async function () {
 	expect(ride.toLat).toBe(input.toLat.toString());
 	expect(ride.toLong).toBe(input.toLong.toString());
 });
+
+test.only("Não deve solicitar uma corrida quando o passageiro é inválido", async function() {
+	//given
+	const rideService = new RideService();
+	const input = {
+		passengerId: "conta invalida qualquer",
+		fromLat: -22.818439,
+		fromLong: -47.064721,
+		toLat: -22.847566,
+		toLong: -47.063104
+	}
+
+	//when
+	//then
+	await expect(()=> rideService.requestRide(input)).rejects.toThrow(new Error("account does not exists"));
+})
 
 test("Não deve solicitar uma corrida quando a conta não for de um passageiro", async function () {
 	const account = await createAccount(false);
