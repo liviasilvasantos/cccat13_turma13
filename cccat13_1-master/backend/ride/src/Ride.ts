@@ -11,7 +11,9 @@ export default class Ride {
         readonly fromLong: number,
         readonly toLat: number,
         readonly toLong: number,
-        readonly date: Date) {
+        readonly date: Date,
+        private distance?: number,
+        private fare?: number) {
         this.driverId = driverId;
     }
 
@@ -34,11 +36,30 @@ export default class Ride {
     }
 
     accept(driverId: string) {
+        if (this.status !== "requested") { throw new Error("ride is not requested"); }
         this.driverId = driverId;
         this.status = "accepted";
     }
 
+    start() {
+        this.status = "in_progress";
+    }
+
+    finish(distance: number, fare: number) {
+        this.distance = distance;
+        this.fare = fare;
+        this.status = "completed";
+    }
+
     getStatus() {
         return this.status;
+    }
+
+    getDistance() {
+        return this.distance;
+    }
+
+    getFare() {
+        return this.fare;
     }
 }

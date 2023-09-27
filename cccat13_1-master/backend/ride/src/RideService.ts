@@ -20,7 +20,6 @@ export default class RideService {
         if (!validateUUID(input.passengerId)) { throw new Error("account does not exists"); }
 
         const account = await this.accountService.getAccount(input.passengerId);
-
         if (!account.is_passenger) { throw new Error("account is not passenger"); }
 
         const existsActiveRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
@@ -36,24 +35,14 @@ export default class RideService {
         if (!account.is_driver) { throw new Error("account is not driver"); }
 
         const ride = await this.getRide(input.rideId);
-
-        if (ride.getStatus() !== "requested") { throw new Error("ride is not requested"); }
+        ride.accept(input.driverId);
 
         if (!ride.driverId) { throw new Error("driver id is empty") }
 
         const existsActiveRides = await this.rideRepository.existsActiveRidesByDriverId(ride.driverId);
         if (existsActiveRides) { throw new Error("active ride already exists") }
 
-        const rideUpdate = {
-            driverId: ride.driverId,
-            status: "accepted",
-            rideId: ride.rideId,
-            distance: null,
-            fare: null
-        }
-
-        // ride.accept(input.driverId);
-        await this.rideRepository.update(rideUpdate);
+        await this.rideRepository.update(ride);
         return;
     }
 
@@ -75,15 +64,8 @@ export default class RideService {
         const ride = await this.getRide(rideId);
         if (ride.getStatus() !== "accepted") throw new Error("Ride is not accepted");
 
-        const updateRide = {
-            driverId: ride.driverId,
-            rideId: ride.rideId,
-            status: "in_progress",
-            distance: null,
-            fare: null
-        }
-
-        this.rideRepository.update(updateRide);
+        ride.start();
+        await this.rideRepository.update(ride);
         return;
     }
 
@@ -103,14 +85,10 @@ export default class RideService {
         const ride = await this.getRide(rideId);
         if (ride.getStatus() !== "in_progress") throw new Error("Ride is not in progress");
 
-        const rideUpdate = {
-            driverId: ride.driverId,
-            status: "completed",
-            rideId: ride.rideId,
-            distance: 22.55,
-            fare: 14.50
-        }
-        await this.rideRepository.update(rideUpdate);
+        const distance = 22.55;
+        const fare = 14.50;
+        ride.finish(distance, fare);
+        await this.rideRepository.update(ride);
         return;
     }
 }

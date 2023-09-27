@@ -39,13 +39,13 @@ test("Deve solicitar uma corrida com status requested", async function () {
 	const ride = await rideService.getRide(output.rideId);
 	expect(ride.getStatus()).toBe("requested");
 	expect(ride.passengerId).toBe(input.passengerId);
-	expect(ride.fromLat).toBe(input.fromLat.toString());
-	expect(ride.fromLong).toBe(input.fromLong.toString());
-	expect(ride.toLat).toBe(input.toLat.toString());
-	expect(ride.toLong).toBe(input.toLong.toString());
+	expect(ride.fromLat).toBe(input.fromLat);
+	expect(ride.fromLong).toBe(input.fromLong);
+	expect(ride.toLat).toBe(input.toLat);
+	expect(ride.toLong).toBe(input.toLong);
 });
 
-test.only("Não deve solicitar uma corrida quando o passageiro é inválido", async function() {
+test("Não deve solicitar uma corrida quando o passageiro é inválido", async function() {
 	//given
 	const rideService = new RideService();
 	const input = {
