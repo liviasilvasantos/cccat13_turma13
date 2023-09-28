@@ -1,38 +1,37 @@
 import crypto from "crypto";
 
 export default class Ride {
-    driverId?: string;
 
     private constructor(readonly rideId: string,
         readonly passengerId: string,
-        driverId: string,
         private status: string,
         readonly fromLat: number,
         readonly fromLong: number,
         readonly toLat: number,
         readonly toLong: number,
         readonly date: Date,
+        private driverId?: string,
         private distance?: number,
-        private fare?: number) {
-        this.driverId = driverId;
+        private fare?: number
+        ) {
     }
 
     //static factory method
-    static create(passengerId: string, driverId: string, fromLat: number, fromLong: number, toLat: number, toLong: number) {
+    static create(passengerId: string, fromLat: number, fromLong: number, toLat: number, toLong: number) {
         const rideId = crypto.randomUUID();
         const status = "requested";
         const date = new Date();
-        return new Ride(rideId, passengerId, driverId, status, fromLat, fromLong, toLat, toLong, date);
+        return new Ride(rideId, passengerId, status, fromLat, fromLong, toLat, toLong, date);
     }
 
     static save(passengerId: string, driverId: string, status: string, fromLat: number, fromLong: number, toLat: number, toLong: number) {
         const rideId = crypto.randomUUID();
         const date = new Date();
-        return new Ride(rideId, passengerId, driverId, status, fromLat, fromLong, toLat, toLong, date);
+        return new Ride(rideId, passengerId, status, fromLat, fromLong, toLat, toLong, date, driverId, undefined, undefined);
     }
 
     static restore(rideId: string, passengerId: string, driverId: string, status: string, fromLat: number, fromLong: number, toLat: number, toLong: number, date: Date) {
-        return new Ride(rideId, passengerId, driverId, status, fromLat, fromLong, toLat, toLong, date);
+        return new Ride(rideId, passengerId, status, fromLat, fromLong, toLat, toLong, date, driverId, undefined, undefined);
     }
 
     accept(driverId: string) {
@@ -61,5 +60,9 @@ export default class Ride {
 
     getFare() {
         return this.fare;
+    }
+
+    getDriverId() {
+        return this.driverId;
     }
 }

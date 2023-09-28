@@ -1,4 +1,3 @@
-import AccountService from "./AccountService";
 import crypto from "crypto";
 import RideRepository from "./RideRepository";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
@@ -6,41 +5,42 @@ import PositionRepository from "./PositionRepository";
 import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
 import Ride from "./Ride";
 import { validate as validateUUID } from "uuid";
+import GetAccount from "./GetAccount";
 
 export default class RideService {
 
-    accountService: AccountService;
+    getAccount: GetAccount;
 
     constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(),
         readonly positionRepository: PositionRepository = new PositionRepositoryDatabase()) {
-        this.accountService = new AccountService();
+        this.getAccount = new GetAccount();
     }
 
     async requestRide(input: any) {
         if (!validateUUID(input.passengerId)) { throw new Error("account does not exists"); }
 
-        const account = await this.accountService.getAccount(input.passengerId);
+        const account = await this.getAccount.execute(input.passengerId);
         if (!account?.isPassenger) { throw new Error("account is not passenger"); }
 
         const existsActiveRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
         if (existsActiveRides) { throw new Error(`already exist open ride for passenger id ${input.passengerId}`); }
 
-        const ride = Ride.create(input.passengerId, input.driverId, input.fromLat, input.fromLong,
+        const ride = Ride.create(input.passengerId, input.fromLat, input.fromLong,
             input.toLat, input.toLong);
         return await this.saveRide(ride);
     }
 
     async acceptRide(input: any) {
-        const account = await this.accountService.getAccount(input.driverId);
+        const account = await this.getAccount.execute(input.driverId);
         if (!account?.isDriver) { throw new Error("account is not driver"); }
 
         const ride = await this.getRide(input.rideId);
         ride.accept(input.driverId);
 
-        if (!ride.driverId) { throw new Error("driver id is empty") }
+        if (!ride.getDriverId()) { throw new Error("driver id is empty") }
 
-        const existsActiveRides = await this.rideRepository.existsActiveRidesByDriverId(ride.driverId);
-        if (existsActiveRides) { throw new Error("active ride already exists") }
+        // const existsActiveRides = await this.rideRepository.existsActiveRidesByDriverId(ride.getDriverId());
+        // if (existsActiveRides) { throw new Error("active ride already exists") }
 
         await this.rideRepository.update(ride);
         return;
@@ -53,11 +53,11 @@ export default class RideService {
     }
 
     async existsActiveRidesByPassengerId(passengerId: string) {
-        return this.rideRepository.existsActiveRidesByPassengerId(passengerId);
+        return await this.rideRepository.existsActiveRidesByPassengerId(passengerId);
     }
 
     async getRide(rideId: string) {
-        return this.rideRepository.getById(rideId);
+        return await this.rideRepository.getById(rideId);
     }
 
     async startRide(rideId: string) {

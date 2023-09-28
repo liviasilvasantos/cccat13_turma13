@@ -40,6 +40,7 @@ Entities > Use Cases > Controllers/Gateways/Presenters > Web/UI/Devices/DB/Exter
 Domain: cojunto de dados e comportamento
 
 Use case: toda e qualquer interação de atores externos que executam algum comportamento no domínio.
+Apenas uma classe com método execute, garatindo que faça uma coisa bem definida (SRP - Single Responsability Principle).
 
 Screaming arch: tudo explícito e claro.
 

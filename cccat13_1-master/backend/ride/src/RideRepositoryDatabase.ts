@@ -11,13 +11,13 @@ export default class RideRepositoryDatabase implements RideRepository {
 	
 	async save (ride: Ride) {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
-		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.fromLat, ride.fromLong, ride.toLat, ride.toLong, ride.getStatus(), ride.date, ride.driverId]);
+		await connection.query("insert into cccat13.ride (ride_id, passenger_id, from_lat, from_lng, to_lat, to_lng, status, date, driver_id) values ($1, $2, $3, $4, $5, $6, $7, $8, $9)", [ride.rideId, ride.passengerId, ride.fromLat, ride.fromLong, ride.toLat, ride.toLong, ride.getStatus(), ride.date, ride.getDriverId()]);
 		await connection.$pool.end();
 	}
 
 	async update(ride: Ride): Promise<void> {
 		const connection = pgp()("postgres://postgres:123456@192.168.15.23:5432/app");
-		await connection.query("update cccat13.ride set driver_id = $1, status = $2, distance = $3, fare = $4 where ride_id = $5", [ride.driverId, ride.getStatus(), ride.getDistance(), ride.getFare(), ride.rideId]);
+		await connection.query("update cccat13.ride set driver_id = $1, status = $2, distance = $3, fare = $4 where ride_id = $5", [ride.getDriverId(), ride.getStatus(), ride.getDistance(), ride.getFare(), ride.rideId]);
 		await connection.$pool.end();
 	}
 	

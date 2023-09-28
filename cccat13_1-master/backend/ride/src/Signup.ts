@@ -4,7 +4,7 @@ import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
 import MailGateway from "./MailGateway";
 import Account from "./Account";
 
-export default class AccountService {
+export default class Signup {
 	cpfValidator: CpfValidator;
 	mailGateway: MailGateway;
 
@@ -13,7 +13,7 @@ export default class AccountService {
 		this.mailGateway = new MailGateway();
 	}
 
-	async signup(input: any) {
+	async execute(input: Input) {
 		const existingAccount = await this.accountRepository.getByEmail(input.email);
 		if (existingAccount) throw new Error("Account already exists");
 
@@ -26,8 +26,13 @@ export default class AccountService {
 		}
 	}
 
-	async getAccount(accountId: string) {
-		const account = await this.accountRepository.getById(accountId);
-		return account;
-	}
+}
+
+type Input = {
+	name: string,
+	email: string,
+	cpf: string,
+	isPassenger: boolean,
+	isDriver: boolean,
+	carPlate: string
 }
