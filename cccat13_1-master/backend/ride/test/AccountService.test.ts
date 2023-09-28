@@ -3,6 +3,7 @@ import AccountService from "../src/AccountService";
 import sinon from "sinon";
 import MailGateway from "../src/MailGateway";
 import AccountRepositoryMemory from "../src/AccountRepositoryMemory";
+import Account from "../src/Account";
 
 test("Deve criar um passageiro", async function () {
 	const input:any = {
@@ -15,10 +16,10 @@ test("Deve criar um passageiro", async function () {
 	const output = await accountService.signup(input);
 	const account = await accountService.getAccount(output.accountId);
 
-	expect(account.account_id).toBeDefined();
-	expect(account.name).toBe(input.name);
-	expect(account.email).toBe(input.email);
-	expect(account.cpf).toBe(input.cpf);
+	expect(account?.accountId).toBeDefined();
+	expect(account?.name).toBe(input.name);
+	expect(account?.email).toBe(input.email);
+	expect(account?.cpf).toBe(input.cpf);
 });
 
 test("Não deve criar um passageiro com cpf inválido", async function () {
@@ -105,14 +106,14 @@ test("Deve criar um passageiro com stub", async function () {
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
-	input.account_id = output.accountId;
-	const sutbGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const sutbGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
+		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, ""));
 	const account = await accountService.getAccount(output.accountId);
 
-	expect(account.account_id).toBeDefined();
-	expect(account.name).toBe(input.name);
-	expect(account.email).toBe(input.email);
-	expect(account.cpf).toBe(input.cpf);
+	expect(account?.accountId).toBeDefined();
+	expect(account?.name).toBe(input.name);
+	expect(account?.email).toBe(input.email);
+	expect(account?.cpf).toBe(input.cpf);
 
 	sutbGetById.restore();
 	stubGetByEmail.restore();
@@ -134,14 +135,15 @@ test("Deve criar um passageiro com spy", async function () {
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
-	input.account_id = output.accountId;
-	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
+		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, "")
+	);
 	const account = await accountService.getAccount(output.accountId);
 
-	expect(account.account_id).toBeDefined();
-	expect(account.name).toBe(input.name);
-	expect(account.email).toBe(input.email);
-	expect(account.cpf).toBe(input.cpf);
+	expect(account?.accountId).toBeDefined();
+	expect(account?.name).toBe(input.name);
+	expect(account?.email).toBe(input.email);
+	expect(account?.cpf).toBe(input.cpf);
 
 	expect(spy.calledOnce).toBeTruthy();
 
@@ -167,14 +169,15 @@ test("Deve criar um passageiro com mock", async function () {
 	const accountService = new AccountService();
 	const output = await accountService.signup(input);
 
-	input.account_id = output.accountId;
-	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(input);
+	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
+		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, "")
+	);
 	const account = await accountService.getAccount(output.accountId);
 
-	expect(account.account_id).toBeDefined();
-	expect(account.name).toBe(input.name);
-	expect(account.email).toBe(input.email);
-	expect(account.cpf).toBe(input.cpf);
+	expect(account?.accountId).toBeDefined();
+	expect(account?.name).toBe(input.name);
+	expect(account?.email).toBe(input.email);
+	expect(account?.cpf).toBe(input.cpf);
 
 	mock.verify();
 
@@ -196,8 +199,8 @@ test("Deve criar um passageiro com fake", async function () {
 	const output = await accountService.signup(input);
 	const account = await accountService.getAccount(output.accountId);
 
-	expect(account.account_id).toBeDefined();
-	expect(account.name).toBe(input.name);
-	expect(account.email).toBe(input.email);
-	expect(account.cpf).toBe(input.cpf);
+	expect(account?.accountId).toBeDefined();
+	expect(account?.name).toBe(input.name);
+	expect(account?.email).toBe(input.email);
+	expect(account?.cpf).toBe(input.cpf);
 });

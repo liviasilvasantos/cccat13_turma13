@@ -20,7 +20,7 @@ export default class RideService {
         if (!validateUUID(input.passengerId)) { throw new Error("account does not exists"); }
 
         const account = await this.accountService.getAccount(input.passengerId);
-        if (!account.is_passenger) { throw new Error("account is not passenger"); }
+        if (!account?.isPassenger) { throw new Error("account is not passenger"); }
 
         const existsActiveRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
         if (existsActiveRides) { throw new Error(`already exist open ride for passenger id ${input.passengerId}`); }
@@ -32,7 +32,7 @@ export default class RideService {
 
     async acceptRide(input: any) {
         const account = await this.accountService.getAccount(input.driverId);
-        if (!account.is_driver) { throw new Error("account is not driver"); }
+        if (!account?.isDriver) { throw new Error("account is not driver"); }
 
         const ride = await this.getRide(input.rideId);
         ride.accept(input.driverId);

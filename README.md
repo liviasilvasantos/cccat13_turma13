@@ -39,6 +39,12 @@ Entities > Use Cases > Controllers/Gateways/Presenters > Web/UI/Devices/DB/Exter
 
 Domain: cojunto de dados e comportamento
 
+Use case: toda e qualquer interação de atores externos que executam algum comportamento no domínio.
+
+Screaming arch: tudo explícito e claro.
+
+Na clean arch, isolamos
+
 # Artigos
 
 https://khalilstemmler.com/articles/software-design-architecture/domain-driven-design-vs-clean-architecture/
