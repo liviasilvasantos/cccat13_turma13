@@ -8,7 +8,7 @@ export default class AccountService {
 	cpfValidator: CpfValidator;
 	mailGateway: MailGateway;
 
-	constructor(readonly accountRepository: AccountRepository = new AccountRepositoryDatabase()) {
+	constructor(readonly accountRepository: AccountRepository) {
 		this.cpfValidator = new CpfValidator();
 		this.mailGateway = new MailGateway();
 	}

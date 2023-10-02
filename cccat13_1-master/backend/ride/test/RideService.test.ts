@@ -5,6 +5,9 @@ import RequestRide from "../src/RequestRide";
 import GetRide from "../src/GetRide";
 import AcceptRide from "../src/AcceptRide";
 import Signup from "../src/Signup";
+import VerifyExistsActiveRidesByPassengerId from "../src/VerifyExistsActiveRidesByPassengerId";
+import SaveRide from "../src/SaveRide";
+import StartRide from "../src/StartRide";
 
 const createAccount = async function (isPassenger: boolean) {
 	const inputAccount = {
@@ -91,8 +94,8 @@ test("Não deve solicitar uma corrida quando já existir uma corrida para o pass
 	const requestRide = new RequestRide();
 	await requestRide.execute(input);
 
-	const rideService = new RideService();
-	const exists = await rideService.existsActiveRidesByPassengerId(input.passengerId);
+	const verifyExistsActiveRidesByPassengerId = new VerifyExistsActiveRidesByPassengerId();
+	const exists = await verifyExistsActiveRidesByPassengerId.execute(input.passengerId);
 	expect(exists).toBe(true);
 
 	await expect(() => requestRide.execute(input)).rejects.toThrow(new Error(`already exist open ride for passenger id ${input.passengerId}`));
@@ -138,7 +141,6 @@ test("Não deve aceitar uma corrida se o status não é requested", async functi
 test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
-	const rideService = new RideService();
 
 	const inputActiveRide = {
 		passengerId: passenger?.accountId,
@@ -152,7 +154,8 @@ test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", asy
 	const rideActive = Ride.save(inputActiveRide.passengerId, inputActiveRide.driverId, "in_progress",
 		inputActiveRide.fromLat, inputActiveRide.fromLong,
 		inputActiveRide.toLat, inputActiveRide.toLong);
-	await rideService.saveRide(rideActive);
+	const saveRide = new SaveRide();
+	await saveRide.execute(rideActive);
 
 	const input = {
 		passengerId: passenger?.accountId,
@@ -166,19 +169,19 @@ test("Não deve aceitar uma corrida se motorista tiver outra corrida ativa", asy
 
 	const ride = Ride.save(input.passengerId, input.driverId, input.status, input.fromLat, input.fromLong,
 		input.toLat, input.toLong);
-	const output = await rideService.saveRide(ride);
+	const output = await saveRide.execute(ride);
 
 	const inputAccept = {
 		driverId: driver?.accountId,
 		rideId: output.rideId
 	}
-	await expect(() => rideService.acceptRide(inputAccept)).rejects.toThrow(new Error("active ride already exists"));
+	const acceptRide = new AcceptRide();
+	await expect(() => acceptRide.execute(inputAccept)).rejects.toThrow(new Error("active ride already exists"));
 });
 
 test("Deve alterar status quando corrida é aceita", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
-	const rideService = new RideService();
 
 	const input = {
 		passengerId: passenger?.accountId,
@@ -192,15 +195,18 @@ test("Deve alterar status quando corrida é aceita", async function () {
 
 	const rideRequested = Ride.save(input.passengerId, input.driverId, input.status, input.fromLat, input.fromLong,
 		input.toLat, input.toLong);
-	const output = await rideService.saveRide(rideRequested);
+	const saveRide = new SaveRide();
+	const output = await saveRide.execute(rideRequested);
 
 	const inputAccept = {
 		driverId: driver?.accountId,
 		rideId: output.rideId
 	}
-	await rideService.acceptRide(inputAccept);
+	const acceptRide = new AcceptRide();
+	await acceptRide.execute(inputAccept);
 
-	const ride = await rideService.getRide(output.rideId);
+	const getRide = new GetRide();
+	const ride = await getRide.execute(output.rideId);
 	expect(ride.getStatus()).toBe("accepted");
 	expect(ride.getDriverId()).toBe(driver?.accountId);
 });
@@ -209,7 +215,6 @@ test("Deve iniciar uma corrida", async function () {
 	const driver = await createAccount(false);
 	const passenger = await createAccount(true);
 
-	const rideService = new RideService();
 	const input = {
 		passengerId: passenger?.accountId,
 		driverId: driver?.accountId,
@@ -222,11 +227,14 @@ test("Deve iniciar uma corrida", async function () {
 
 	const rideAccepted = Ride.save(input.passengerId, input.driverId, input.status, input.fromLat, input.fromLong,
 		input.toLat, input.toLong);
-	const output = await rideService.saveRide(rideAccepted);
+	const saveRide = new SaveRide();
+	const output = await saveRide.execute(rideAccepted);
 
-	await rideService.startRide(output.rideId);
+	const startRide = new StartRide();
+	await startRide.execute(output.rideId);
 
-	const ride = await rideService.getRide(output.rideId);
+	const getRide = new GetRide();
+	const ride = await getRide.execute(output.rideId);
 	expect(ride.getStatus()).toBe("in_progress");
 
 });

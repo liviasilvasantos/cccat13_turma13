@@ -10,8 +10,8 @@ export default class AcceptRide {
     accountService: AccountService;
     getRide: GetRide;
 
-    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(),
-        readonly positionRepository: PositionRepository = new PositionRepositoryDatabase()) {
+    constructor(readonly rideRepository: RideRepository,
+        readonly positionRepository: PositionRepository) {
         this.accountService = new AccountService();
         this.getRide = new GetRide();
     }

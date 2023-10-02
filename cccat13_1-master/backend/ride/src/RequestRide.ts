@@ -12,8 +12,8 @@ export default class RequestRide {
     accountService: AccountService;
     saveRide: SaveRide;
 
-    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(),
-        readonly positionRepository: PositionRepository = new PositionRepositoryDatabase()) {
+    constructor(readonly rideRepository: RideRepository,
+        readonly positionRepository: PositionRepository) {
         this.accountService = new AccountService();
         this.saveRide = new SaveRide();
     }

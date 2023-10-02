@@ -11,8 +11,8 @@ export default class RideService {
 
     getAccount: GetAccount;
 
-    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase(),
-        readonly positionRepository: PositionRepository = new PositionRepositoryDatabase()) {
+    constructor(readonly rideRepository: RideRepository,
+        readonly positionRepository: PositionRepository) {
         this.getAccount = new GetAccount();
     }
 

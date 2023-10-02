@@ -6,6 +6,26 @@ import AccountRepositoryMemory from "../src/AccountRepositoryMemory";
 import Account from "../src/Account";
 import Signup from "../src/Signup";
 import GetAccount from "../src/GetAccount";
+import AccountRepository from "../src/AccountRepository";
+import PgPromiseAdapter from "../src/PgPromiseAdapter";
+import Connection from "../src/Connection";
+
+let connection: Connection;
+let accountRepository: AccountRepository;
+let signup: Signup;
+let getAccount: GetAccount;
+
+beforeEach(function () {
+	connection = new PgPromiseAdapter();
+	accountRepository = new AccountRepositoryDatabase(connection);
+
+	signup = new Signup(accountRepository);
+	getAccount = new GetAccount(accountRepository);
+})
+
+afterEach(async function () {
+	await connection.close();
+})
 
 test("Deve criar um passageiro", async function () {
 	const input: any = {
@@ -14,12 +34,9 @@ test("Deve criar um passageiro", async function () {
 		cpf: "95818705552",
 		isPassenger: true
 	}
-	const signup = new Signup();
 	const output = await signup.execute(input);
 
-	const getAccount = new GetAccount();
 	const account = await getAccount.execute(output.accountId);
-
 	expect(account?.accountId).toBeDefined();
 	expect(account?.name).toBe(input.name);
 	expect(account?.email).toBe(input.email);
@@ -35,7 +52,6 @@ test("Não deve criar um passageiro com cpf inválido", async function () {
 		isDriver: false,
 		carPlate: ""
 	}
-	const signup = new Signup();
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid cpf"));
 });
 
@@ -48,7 +64,6 @@ test("Não deve criar um passageiro com nome inválido", async function () {
 		isDriver: false,
 		carPlate: ""
 	}
-	const signup = new Signup();
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid name"));
 });
 
@@ -61,7 +76,6 @@ test("Não deve criar um passageiro com email inválido", async function () {
 		isDriver: false,
 		carPlate: ""
 	}
-	const signup = new Signup();
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid email"));
 });
 
@@ -74,7 +88,6 @@ test("Não deve criar um passageiro com conta existente", async function () {
 		isDriver: false,
 		carPlate: ""
 	}
-	const signup = new Signup();
 	await signup.execute(input)
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Account already exists"));
 });
@@ -88,7 +101,6 @@ test("Deve criar um motorista", async function () {
 		isDriver: true,
 		isPassenger: false
 	}
-	const signup = new Signup();
 	const output = await signup.execute(input);
 	expect(output.accountId).toBeDefined();
 });
@@ -102,7 +114,6 @@ test("Não deve criar um motorista com place do carro inválida", async function
 		isDriver: true,
 		isPassenger: false
 	}
-	const signup = new Signup();
 	await expect(() => signup.execute(input)).rejects.toThrow(new Error("Invalid plate"));
 });
 
@@ -117,13 +128,11 @@ test("Deve criar um passageiro com stub", async function () {
 	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
 	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
-	const signup = new Signup();
 	const output = await signup.execute(input);
 
 	const sutbGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
 		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, ""));
 
-	const getAccount = new GetAccount();
 	const account = await getAccount.execute(output.accountId);
 
 	expect(account?.accountId).toBeDefined();
@@ -148,13 +157,11 @@ test("Deve criar um passageiro com spy", async function () {
 	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
 	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
-	const signup = new Signup();
 	const output = await signup.execute(input);
 
 	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
 		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, "")
 	);
-	const getAccount = new GetAccount();
 	const account = await getAccount.execute(output.accountId);
 
 	expect(account?.accountId).toBeDefined();
@@ -183,13 +190,11 @@ test("Deve criar um passageiro com mock", async function () {
 	const stubSave = sinon.stub(AccountRepositoryDatabase.prototype, "save").resolves();
 	const stubGetByEmail = sinon.stub(AccountRepositoryDatabase.prototype, "getByEmail").resolves();
 
-	const signup = new Signup();
 	const output = await signup.execute(input);
 
 	const stubGetById = sinon.stub(AccountRepositoryDatabase.prototype, "getById").resolves(
 		Account.create(input.name, input.email, input.cpf, input.isPassenger, false, "")
 	);
-	const getAccount = new GetAccount();
 	const account = await getAccount.execute(output.accountId);
 
 	expect(account?.accountId).toBeDefined();
@@ -206,17 +211,17 @@ test("Deve criar um passageiro com mock", async function () {
 });
 
 test("Deve criar um passageiro com fake", async function () {
-	const accountRepository = new AccountRepositoryMemory();
+	const accountRepositoryMemory = new AccountRepositoryMemory();
 	const input: any = {
 		name: "John Doe",
 		email: `john.doe${Math.random()}@gmail.com`,
 		cpf: "95818705552",
 		isPassenger: true
 	}
-	const signup = new Signup(accountRepository);
+	const signup = new Signup(accountRepositoryMemory);
 	const output = await signup.execute(input);
 
-	const getAccount = new GetAccount(accountRepository);
+	const getAccount = new GetAccount(accountRepositoryMemory);
 	const account = await getAccount.execute(output.accountId);
 
 	expect(account?.accountId).toBeDefined();

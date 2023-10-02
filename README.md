@@ -44,7 +44,9 @@ Apenas uma classe com método execute, garatindo que faça uma coisa bem definid
 
 Screaming arch: tudo explícito e claro.
 
-Na clean arch, isolamos
+Interface Adapters: fazem a ponte entre os casos de uso e os recursos externos.
+
+Pattern Adapter: faz um wrapper em uma dependência, oferecendo uma interface. Adapta uma interface em outra, para ficar livre de uma dependência.
 
 # Artigos
 

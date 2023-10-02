@@ -4,7 +4,7 @@ import Ride from "./Ride";
 
 export default class SaveRide {
 
-    constructor(readonly rideRepository: RideRepository = new RideRepositoryDatabase()) { }
+    constructor(readonly rideRepository: RideRepository) { }
 
     async execute(ride: Ride) {
         await this.rideRepository.save(ride);
