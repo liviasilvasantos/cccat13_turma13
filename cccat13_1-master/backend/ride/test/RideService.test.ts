@@ -1,4 +1,3 @@
-import RideService from "../src/RideService";
 import crypto from "crypto";
 import Ride from "../src/Ride";
 import RequestRide from "../src/RequestRide";
