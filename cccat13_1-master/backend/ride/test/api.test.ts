@@ -13,9 +13,9 @@ test("Deve criar uma conta de passageiro", async function () {
 
     const responseGetAccount = await axios.get(`http://localhost:3000/accounts/${outputSignup.accountId}`);
     const outputGetAccount = responseGetAccount.data;
-    expect(outputGetAccount.account_id).toBeDefined();
+    expect(outputGetAccount.accountId).toBeDefined();
     expect(outputGetAccount.name).toBe(inputSignup.name);
     expect(outputGetAccount.email).toBe(inputSignup.email);
     expect(outputGetAccount.cpf).toBe(inputSignup.cpf);
-    expect(outputGetAccount.is_passenger).toBe(inputSignup.isPassenger);
+    expect(outputGetAccount.isPassenger).toBe(inputSignup.isPassenger);
 })
