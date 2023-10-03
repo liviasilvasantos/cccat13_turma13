@@ -1,5 +1,4 @@
 import AccountRepositoryDatabase from "../src/AccountRepositoryDatabase";
-import AccountService from "../src/AccountService";
 import sinon from "sinon";
 import MailGateway from "../src/MailGateway";
 import AccountRepositoryMemory from "../src/AccountRepositoryMemory";

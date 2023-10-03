@@ -1,27 +1,18 @@
-import AccountService from "./AccountService";
 import RideRepository from "./RideRepository";
-import RideRepositoryDatabase from "./RideRepositoryDatabase";
-import PositionRepository from "./PositionRepository";
-import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
 import Ride from "./Ride";
 import { validate as validateUUID } from "uuid";
-import SaveRide from "./SaveRide";
+import AccountRepository from "./AccountRepository";
 
 export default class RequestRide {
 
-    accountService: AccountService;
-    saveRide: SaveRide;
-
     constructor(readonly rideRepository: RideRepository,
-        readonly positionRepository: PositionRepository) {
-        this.accountService = new AccountService();
-        this.saveRide = new SaveRide();
+        readonly accountRepository: AccountRepository) {
     }
 
     async execute(input: Input) {
         if (!validateUUID(input.passengerId)) { throw new Error("account does not exists"); }
 
-        const account = await this.accountService.getAccount(input.passengerId);
+        const account = await this.accountRepository.getById(input.passengerId);
         if (!account?.isPassenger) { throw new Error("account is not passenger"); }
 
         const existsActiveRides = await this.rideRepository.existsActiveRidesByPassengerId(input.passengerId);
@@ -29,7 +20,9 @@ export default class RequestRide {
 
         const ride = Ride.create(input.passengerId, input.fromLat, input.fromLong,
             input.toLat, input.toLong);
-        return await this.saveRide.execute(ride);
+        await this.rideRepository.save(ride);
+
+        return { rideId: ride.rideId };
     }
 
 }

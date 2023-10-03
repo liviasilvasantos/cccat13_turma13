@@ -1,17 +1,18 @@
 import RideRepository from "./RideRepository";
 
-export default class StartRide {
+export default class FinishRide {
 
     constructor(readonly rideRepository: RideRepository) {
     }
 
     async execute(rideId: string) {
         const ride = await this.rideRepository.getById(rideId);
-        if (ride.getStatus() !== "accepted") throw new Error("Ride is not accepted");
+        if (ride.getStatus() !== "in_progress") throw new Error("Ride is not in progress");
 
-        ride.start();
+        const distance = 22.55;
+        const fare = 14.50;
+        ride.finish(distance, fare);
         await this.rideRepository.update(ride);
         return;
     }
-
 }
