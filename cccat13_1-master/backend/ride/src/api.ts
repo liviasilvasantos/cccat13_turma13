@@ -9,17 +9,15 @@ import GetRide from "./GetRide";
 import PgPromiseAdapter from "./PgPromiseAdapter";
 import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
 import RideRepositoryDatabase from "./RideRepositoryDatabase";
-import PositionRepositoryDatabase from "./PositionRepositoryDatabase";
+
 const app = express();
 app.use(express.json());
 
 const connection = new PgPromiseAdapter();
 const accountRepository = new AccountRepositoryDatabase(connection);
 const rideRepository = new RideRepositoryDatabase(connection);
-const positionRepository = new PositionRepositoryDatabase(connection);
 
 // port
-
 app.post("/signup", async function (req, res) {
     const input = req.body;
     const signup = new Signup(accountRepository);
@@ -29,14 +27,14 @@ app.post("/signup", async function (req, res) {
 
 app.post("/rides/request", async function (req, res) {
     const input = req.body;
-    const requestRide = new RequestRide(rideRepository, positionRepository);
+    const requestRide = new RequestRide(rideRepository, accountRepository);
     const output = await requestRide.execute(input);
     res.json(output);
 })
 
 app.post("/rides/accpept", async function (req, res) {
     const input = req.body;
-    const acceptRide = new AcceptRide(rideRepository, positionRepository);
+    const acceptRide = new AcceptRide(rideRepository, accountRepository);
     const output = await acceptRide.execute(input);
     res.json(output);
 })
