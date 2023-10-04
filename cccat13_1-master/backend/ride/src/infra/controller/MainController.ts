@@ -1,9 +1,9 @@
-import AcceptRide from "./AcceptRide";
-import GetAccount from "./GetAccount";
-import GetRide from "./GetRide";
-import HttpServer from "./HttpServer";
-import RequestRide from "./RequestRide";
-import Signup from "./Signup";
+import AcceptRide from "../../application/usecase/AcceptRide";
+import GetAccount from "../../application/usecase/GetAccount";
+import GetRide from "../../application/usecase/GetRide";
+import HttpServer from "../http/HttpServer";
+import RequestRide from "../../application/usecase/RequestRide";
+import Signup from "../../application/usecase/Signup";
 
 //interface adapter
 export default class MainController {

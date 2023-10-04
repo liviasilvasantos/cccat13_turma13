@@ -1,8 +1,8 @@
 // resource - driven actor
 // adapter
-import RideRepository from "./RideRepository";
-import Ride from "./Ride";
-import Connection from "./Connection";
+import RideRepository from "../../application/repository/RideRepository";
+import Ride from "../../domain/Ride";
+import Connection from "../database/Connection";
 
 export default class RideRepositoryDatabase implements RideRepository {
 

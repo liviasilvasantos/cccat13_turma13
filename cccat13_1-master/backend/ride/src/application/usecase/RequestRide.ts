@@ -1,7 +1,7 @@
-import RideRepository from "./RideRepository";
-import Ride from "./Ride";
+import RideRepository from "../repository/RideRepository";
+import Ride from "../../domain/Ride";
 import { validate as validateUUID } from "uuid";
-import AccountRepository from "./AccountRepository";
+import AccountRepository from "../repository/AccountRepository";
 
 export default class RequestRide {
 

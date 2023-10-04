@@ -1,13 +1,13 @@
-import AccountRepositoryDatabase from "../src/AccountRepositoryDatabase";
+import AccountRepositoryDatabase from "../../src/infra/repository/AccountRepositoryDatabase";
 import sinon from "sinon";
-import MailGateway from "../src/MailGateway";
-import AccountRepositoryMemory from "../src/AccountRepositoryMemory";
-import Account from "../src/Account";
-import Signup from "../src/Signup";
-import GetAccount from "../src/GetAccount";
-import AccountRepository from "../src/AccountRepository";
-import PgPromiseAdapter from "../src/PgPromiseAdapter";
-import Connection from "../src/Connection";
+import MailGateway from "../../src/application/gateway/MailGateway";
+import AccountRepositoryMemory from "../../src/infra/repository/AccountRepositoryMemory";
+import Account from "../../src/domain/Account";
+import Signup from "../../src/application/usecase/Signup";
+import GetAccount from "../../src/application/usecase/GetAccount";
+import AccountRepository from "../../src/application/repository/AccountRepository";
+import PgPromiseAdapter from "../../src/infra/database/PgPromiseAdapter";
+import Connection from "../../src/infra/database/Connection";
 
 let connection: Connection;
 let accountRepository: AccountRepository;

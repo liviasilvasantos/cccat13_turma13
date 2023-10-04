@@ -1,6 +1,6 @@
-import RideRepository from "./RideRepository";
-import RideRepositoryDatabase from "./RideRepositoryDatabase";
-import Ride from "./Ride";
+import RideRepository from "../repository/RideRepository";
+import RideRepositoryDatabase from "../../infra/repository/RideRepositoryDatabase";
+import Ride from "../../domain/Ride";
 
 export default class SaveRide {
 

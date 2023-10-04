@@ -1,4 +1,4 @@
-import RideRepository from "./RideRepository";
+import RideRepository from "../repository/RideRepository";
 
 export default class FinishRide {
 

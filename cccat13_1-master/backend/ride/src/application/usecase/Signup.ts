@@ -1,8 +1,8 @@
-import CpfValidator from "./CpfValidator";
-import AccountRepository from "./AccountRepository";
-import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
-import MailGateway from "./MailGateway";
-import Account from "./Account";
+import CpfValidator from "../../domain/CpfValidator";
+import AccountRepository from "../repository/AccountRepository";
+import AccountRepositoryDatabase from "../../infra/repository/AccountRepositoryDatabase";
+import MailGateway from "../gateway/MailGateway";
+import Account from "../../domain/Account";
 
 export default class Signup {
 	cpfValidator: CpfValidator;

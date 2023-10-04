@@ -1,6 +1,6 @@
-import AccountRepository from "./AccountRepository";
-import Account from "./Account";
-import Connection from "./Connection";
+import AccountRepository from "../../application/repository/AccountRepository";
+import Account from "../../domain/Account";
+import Connection from "../database/Connection";
 
 export default class AccountRepositoryDatabase implements AccountRepository {
 

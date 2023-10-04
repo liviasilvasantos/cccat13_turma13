@@ -1,7 +1,7 @@
 // resource - driven actor
 // adapter
-import PositionRepository from "./PositionRepository";
-import Connection from "./Connection";
+import PositionRepository from "../../application/repository/PositionRepository";
+import Connection from "../database/Connection";
 
 export default class PositionRepositoryDatabase implements PositionRepository {
 

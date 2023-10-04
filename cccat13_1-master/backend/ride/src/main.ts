@@ -1,15 +1,15 @@
 // driver
 // adapter
-import Signup from "./Signup";
-import RequestRide from "./RequestRide";
-import AcceptRide from "./AcceptRide";
-import GetAccount from "./GetAccount";
-import GetRide from "./GetRide";
-import PgPromiseAdapter from "./PgPromiseAdapter";
-import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
-import RideRepositoryDatabase from "./RideRepositoryDatabase";
-import ExpressAdapter from "./ExpressAdapter";
-import MainController from "./MainController";
+import Signup from "./application/usecase/Signup";
+import RequestRide from "./application/usecase/RequestRide";
+import AcceptRide from "./application/usecase/AcceptRide";
+import GetAccount from "./application/usecase/GetAccount";
+import GetRide from "./application/usecase/GetRide";
+import PgPromiseAdapter from "./infra/database/PgPromiseAdapter";
+import AccountRepositoryDatabase from "./infra/repository/AccountRepositoryDatabase";
+import RideRepositoryDatabase from "./infra/repository/RideRepositoryDatabase";
+import ExpressAdapter from "./infra/http/ExpressAdapter";
+import MainController from "./infra/controller/MainController";
 
 const connection = new PgPromiseAdapter();
 const accountRepository = new AccountRepositoryDatabase(connection);

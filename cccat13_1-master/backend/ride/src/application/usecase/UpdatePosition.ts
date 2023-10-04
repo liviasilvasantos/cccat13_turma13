@@ -1,6 +1,6 @@
 import crypto from "crypto";
-import RideRepository from "./RideRepository";
-import PositionRepository from "./PositionRepository";
+import RideRepository from "../repository/RideRepository";
+import PositionRepository from "../repository/PositionRepository";
 
 export default class UpdatePosition {
 

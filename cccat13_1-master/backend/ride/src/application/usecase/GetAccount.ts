@@ -1,5 +1,5 @@
-import AccountRepository from "./AccountRepository";
-import AccountRepositoryDatabase from "./AccountRepositoryDatabase";
+import AccountRepository from "../repository/AccountRepository";
+import AccountRepositoryDatabase from "../../infra/repository/AccountRepositoryDatabase";
 
 export default class GetAccount {
 
