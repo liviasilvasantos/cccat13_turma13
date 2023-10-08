@@ -18,6 +18,20 @@ npx jest test/AccountService.test.ts
 ## Executar aplicação:
 
 ```
-cd backend/ride
+cd cccat13_1-master/backend/ride
 npx nodemon src/api.ts
+```
+
+## Extensions
+
+Live Preview
+Cmd + Shift + P > Live Preview: Start Server\
+
+Browser Preview
+
+## Executar fronted:
+
+```
+cd cccat13_1-master/fronted
+yarn dev
 ```
