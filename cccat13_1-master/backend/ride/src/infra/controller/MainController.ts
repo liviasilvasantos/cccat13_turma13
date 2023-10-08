@@ -12,8 +12,6 @@ export default class MainController {
         requestRide: RequestRide, getRide: GetRide, acceptRide: AcceptRide) {
 
         httpServer.on("post", "/signup", async function (params: any, body: any) {
-            console.log(body);
-            
             const output = await signup.execute(body);
             return output;
         });

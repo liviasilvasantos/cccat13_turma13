@@ -11,10 +11,15 @@
   });
 
   const accountId = ref("");
+  const error = ref("");
   async function signup(){
-    const response = await axios.post("http://localhost:3000/signup", input.value);
-    const output = response.data;
-    accountId.value = output.accountId;
+    try {
+      const response = await axios.post("http://localhost:3000/signup", input.value);
+      const output = response.data;
+      accountId.value = output.accountId;
+    }catch(e:any){
+      error.value = e.response.data.message;
+    }
   }
 </script>
 
@@ -26,7 +31,8 @@
     <input class="signup-cpf" type="text" v-model="input.cpf"/>
     <input class="signup-is-passenger" type="checkbox" v-model="input.isPassenger"/>
     <button class="signup-submit" @click="signup()">Submit</button>
-    <span class="signup-account-id">{{ accountId }}</span>
+    <span v-if="accountId" class="signup-account-id">{{ accountId }}</span>
+    <span class="signup-error">{{ error }}</span>
   </div>
 </template>
 
