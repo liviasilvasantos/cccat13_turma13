@@ -1,9 +1,16 @@
 import { mount } from "@vue/test-utils";
 import AppVue from "../src/App.vue";
 
-test("App.test.ts", function () {
+test("deve criar um passageiro", async function () {
     const wrapper = mount(AppVue, {});
-    console.log(wrapper.html());
+    expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
-    expect(wrapper.get("h1").text()).toBe("Vite + Vue");
+    wrapper.get(".signup-name").setValue("John Doe");
+    wrapper.get(".signup-email").setValue(`john.doe${Math.random()}@gmail.com`);
+    wrapper.get(".signup-cpf").setValue("95818705552");
+    wrapper.get(".signup-is-passenger").setValue(true);
+
+    await wrapper.get(".signup-submit").trigger("click");
+    expect(wrapper.get(".signup-account-id").text()).toBeDefined();
+    // console.log(wrapper.html());
 });

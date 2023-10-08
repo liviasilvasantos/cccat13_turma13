@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
+  import axios from "axios";
+  import {ref} from "vue";
+
+  const input = ref({
+    name: "",
+    email:"",
+    cpf: "",
+    isPassenger:false,
+    isDriver:false
+  });
+
+  const accountId = ref("");
+  async function signup(){
+    const response = await axios.post("http://localhost:3000/signup", input.value);
+    const output = response.data;
+    accountId.value = output.accountId;
+  }
 </script>
 
 <template>
   <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
+    <h2 class="signup-title">Signup</h2>
+    <input class="signup-name" type="text" v-model="input.name"/>
+    <input class="signup-email" type="text" v-model="input.email"/>
+    <input class="signup-cpf" type="text" v-model="input.cpf"/>
+    <input class="signup-is-passenger" type="checkbox" v-model="input.isPassenger"/>
+    <button class="signup-submit" @click="signup()">Submit</button>
+    <span class="signup-account-id">{{ accountId }}</span>
   </div>
-  <HelloWorld msg="Vite + Vue" />
 </template>
 
 <style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
 </style>
