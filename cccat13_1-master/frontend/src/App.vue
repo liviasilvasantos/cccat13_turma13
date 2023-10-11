@@ -14,6 +14,7 @@
   const error = ref("");
   async function signup(){
     try {
+      //interface adapters / frameworks and drivers
       const response = await axios.post("http://localhost:3000/signup", input.value);
       const output = response.data;
       accountId.value = output.accountId;
