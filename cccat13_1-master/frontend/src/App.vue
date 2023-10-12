@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import axios from "axios";
   import {ref} from "vue";
+  import RideGatewayHttp from './infra/gateway/RideGatewayHttp';
 
   const input = ref({
     name: "",
@@ -14,9 +14,8 @@
   const error = ref("");
   async function signup(){
     try {
-      //interface adapters / frameworks and drivers
-      const response = await axios.post("http://localhost:3000/signup", input.value);
-      const output = response.data;
+      const rideGateway = new RideGatewayHttp();
+      const output = await rideGateway.signup(input.value);
       accountId.value = output.accountId;
     }catch(e:any){
       error.value = e.response.data.message;
