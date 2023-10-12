@@ -1,5 +1,6 @@
 import { mount } from "@vue/test-utils";
 import AppVue from "../src/App.vue";
+import RideGatewayHttp from '../src/infra/gateway/RideGatewayHttp';
 
 function sleep(time:number){
     return new Promise((resolve) => {
@@ -10,7 +11,13 @@ function sleep(time:number){
 }
 
 test("deve criar um passageiro", async function () {
-    const wrapper = mount(AppVue, {});
+    const wrapper = mount(AppVue, {
+        global: {
+            provide: { 
+                rideGateway: new RideGatewayHttp();
+            }
+        }
+    });
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-name").setValue("John Doe");

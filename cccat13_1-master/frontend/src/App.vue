@@ -1,6 +1,6 @@
 <script setup lang="ts">
-  import {ref} from "vue";
-  import RideGatewayHttp from './infra/gateway/RideGatewayHttp';
+  import {inject, ref} from "vue";
+  import RideGateway from './infra/gateway/RideGateway';
 
   const input = ref({
     name: "",
@@ -12,9 +12,10 @@
 
   const accountId = ref("");
   const error = ref("");
+  const rideGateway = inject("rideGateway") as RideGateway;
+
   async function signup(){
     try {
-      const rideGateway = new RideGatewayHttp();
       const output = await rideGateway.signup(input.value);
       accountId.value = output.accountId;
     }catch(e:any){
