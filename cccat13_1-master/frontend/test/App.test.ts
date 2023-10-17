@@ -115,11 +115,10 @@ test("deve criar um passageiro usando fake", async function () {
     wrapper.get(".signup-is-passenger").setValue(true);
 
     await wrapper.get(".signup-submit").trigger("click");
-    await sleep(200);
     expect(wrapper.get(".signup-account-id").text()).toHaveLength(36);
 });
 
-test.only("não deve criar um passageiro se nome invalido usando fake", async function () {
+test("não deve criar um passageiro se nome invalido usando fake", async function () {
     const rideGateway: RideGateway = {
         async signup(input:any): Promise<any>{
             throw new Error("Invalid name")
@@ -139,6 +138,5 @@ test.only("não deve criar um passageiro se nome invalido usando fake", async fu
     wrapper.get(".signup-is-passenger").setValue(true);
 
     await wrapper.get(".signup-submit").trigger("click");
-    await sleep(200);
     expect(wrapper.get(".signup-error").text()).toBe("Invalid name");
 });
