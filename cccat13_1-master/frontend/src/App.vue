@@ -19,7 +19,7 @@
       const output = await rideGateway.signup(input.value);
       accountId.value = output.accountId;
     }catch(e:any){
-      error.value = e.response.data.message;
+      error.value = e.message;
     }
   }
 </script>

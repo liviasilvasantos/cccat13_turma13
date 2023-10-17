@@ -2,19 +2,19 @@ import { mount } from "@vue/test-utils";
 import AppVue from "../src/App.vue";
 import RideGatewayHttp from '../src/infra/gateway/RideGatewayHttp';
 
-function sleep(time:number){
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(true);
-        }, time) ;
-    })
+function sleep (time: number) {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve(true);
+		}, time);
+	});
 }
 
 test("deve criar um passageiro", async function () {
     const wrapper = mount(AppVue, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp();
+                rideGateway: new RideGatewayHttp()
             }
         }
     });
@@ -31,7 +31,13 @@ test("deve criar um passageiro", async function () {
 });
 
 test("não deve criar um passageiro se cpf invalido", async function () {
-    const wrapper = mount(AppVue, {});
+    const wrapper = mount(AppVue, {
+        global: {
+            provide: { 
+                rideGateway: new RideGatewayHttp()
+            }
+        }
+    });
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-name").setValue("John Doe");
@@ -45,7 +51,13 @@ test("não deve criar um passageiro se cpf invalido", async function () {
 });
 
 test("não deve criar um passageiro se nome invalido", async function () {
-    const wrapper = mount(AppVue, {});
+    const wrapper = mount(AppVue, {
+        global: {
+            provide: { 
+                rideGateway: new RideGatewayHttp()
+            }
+        }
+    });
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-email").setValue(`john.doe${Math.random()}@gmail.com`);
@@ -58,7 +70,13 @@ test("não deve criar um passageiro se nome invalido", async function () {
 });
 
 test("não deve criar um passageiro se email ja cadastrado", async function () {
-    const wrapper = mount(AppVue, {});
+    const wrapper = mount(AppVue, {
+        global: {
+            provide: { 
+                rideGateway: new RideGatewayHttp()
+            }
+        }
+    });
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-name").setValue("John Doe");

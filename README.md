@@ -8,7 +8,7 @@ subir docker postgres e depois executar arquivo create.sql
 % \dt cccat13.account
 ``````
 
-## Executar teste:
+## Executar testes backend:
 
 ```
 cd backend/ride
@@ -34,4 +34,11 @@ Browser Preview
 ```
 cd cccat13_1-master/fronted
 yarn dev
+```
+
+## Executar testes fronted:
+
+```
+cd cccat13_1-master/fronted
+yarn test
 ```
