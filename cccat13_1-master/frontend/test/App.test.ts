@@ -2,6 +2,7 @@ import { mount } from "@vue/test-utils";
 import AppVue from "../src/App.vue";
 import RideGatewayHttp from '../src/infra/gateway/RideGatewayHttp';
 import RideGateway from "../src/infra/gateway/RideGateway";
+import AxiosAdapter from "../src/infra/gateway/http/AxiosAdapter";
 
 function sleep (time: number) {
 	return new Promise((resolve) => {
@@ -12,10 +13,11 @@ function sleep (time: number) {
 }
 
 test("deve criar um passageiro", async function () {
+    const httpClient = new AxiosAdapter();
     const wrapper = mount(AppVue, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp()
+                rideGateway: new RideGatewayHttp(httpClient)
             }
         }
     });
@@ -32,10 +34,11 @@ test("deve criar um passageiro", async function () {
 });
 
 test("não deve criar um passageiro se cpf invalido", async function () {
+    const httpClient = new AxiosAdapter();
     const wrapper = mount(AppVue, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp()
+                rideGateway: new RideGatewayHttp(httpClient)
             }
         }
     });
@@ -52,10 +55,11 @@ test("não deve criar um passageiro se cpf invalido", async function () {
 });
 
 test("não deve criar um passageiro se nome invalido", async function () {
+    const httpClient = new AxiosAdapter();
     const wrapper = mount(AppVue, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp()
+                rideGateway: new RideGatewayHttp(httpClient)
             }
         }
     });
@@ -71,10 +75,11 @@ test("não deve criar um passageiro se nome invalido", async function () {
 });
 
 test("não deve criar um passageiro se email ja cadastrado", async function () {
+    const httpClient = new AxiosAdapter();
     const wrapper = mount(AppVue, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp()
+                rideGateway: new RideGatewayHttp(httpClient)
             }
         }
     });
