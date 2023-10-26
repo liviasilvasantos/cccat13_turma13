@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import RideGatewayHttp from './infra/gateway/RideGatewayHttp';
-import AxiosAdapter from './infra/gateway/http/AxiosAdapter';
+// import AxiosAdapter from './infra/gateway/http/AxiosAdapter';
 import FetchAdapter from './infra/gateway/http/FetchAdapter';
 
 
