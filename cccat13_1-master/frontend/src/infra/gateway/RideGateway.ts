@@ -1,3 +1,5 @@
+import Account from "../../domain/Account";
+
 export default interface RideGateway {
-    signup(input:any): Promise<any>;
+    signup(input: Account): Promise<any>;
 }

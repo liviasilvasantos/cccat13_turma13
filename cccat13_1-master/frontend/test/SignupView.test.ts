@@ -1,9 +1,10 @@
 import { mount } from "@vue/test-utils";
-import AppVue from "../src/App.vue";
+import SignupView from "../src/view/SignupView.vue";
 import RideGatewayHttp from '../src/infra/gateway/RideGatewayHttp';
 import RideGateway from "../src/infra/gateway/RideGateway";
 import AxiosAdapter from "../src/infra/gateway/http/AxiosAdapter";
 import FetchAdapter from "../src/infra/gateway/http/FetchAdapter";
+import Account from "../src/domain/Account";
 
 function sleep (time: number) {
 	return new Promise((resolve) => {
@@ -14,9 +15,9 @@ function sleep (time: number) {
 }
 
 test("deve criar um passageiro", async function () {
-    // const httpClient = new AxiosAdapter();
-    const httpClient = new FetchAdapter();
-    const wrapper = mount(AppVue, {
+    const httpClient = new AxiosAdapter();
+    // const httpClient = new FetchAdapter();
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway: new RideGatewayHttp(httpClient)
@@ -36,9 +37,9 @@ test("deve criar um passageiro", async function () {
 });
 
 test("não deve criar um passageiro se cpf invalido", async function () {
-    // const httpClient = new AxiosAdapter();
-    const httpClient = new FetchAdapter();
-    const wrapper = mount(AppVue, {
+    const httpClient = new AxiosAdapter();
+    // const httpClient = new FetchAdapter();
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway: new RideGatewayHttp(httpClient)
@@ -58,9 +59,9 @@ test("não deve criar um passageiro se cpf invalido", async function () {
 });
 
 test("não deve criar um passageiro se nome invalido", async function () {
-    // const httpClient = new AxiosAdapter();
-    const httpClient = new FetchAdapter();
-    const wrapper = mount(AppVue, {
+    const httpClient = new AxiosAdapter();
+    // const httpClient = new FetchAdapter();
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway: new RideGatewayHttp(httpClient)
@@ -70,7 +71,7 @@ test("não deve criar um passageiro se nome invalido", async function () {
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-email").setValue(`john.doe${Math.random()}@gmail.com`);
-    wrapper.get(".signup-cpf").setValue("12312312312");
+    wrapper.get(".signup-cpf").setValue("95818705552");
     wrapper.get(".signup-is-passenger").setValue(true);
 
     await wrapper.get(".signup-submit").trigger("click");
@@ -79,9 +80,9 @@ test("não deve criar um passageiro se nome invalido", async function () {
 });
 
 test("não deve criar um passageiro se email ja cadastrado", async function () {
-    // const httpClient = new AxiosAdapter();
-    const httpClient = new FetchAdapter();
-    const wrapper = mount(AppVue, {
+    const httpClient = new AxiosAdapter();
+    // const httpClient = new FetchAdapter();
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway: new RideGatewayHttp(httpClient)
@@ -104,13 +105,13 @@ test("não deve criar um passageiro se email ja cadastrado", async function () {
 
 test("deve criar um passageiro usando fake", async function () {
     const rideGateway: RideGateway = {
-        async signup(input:any): Promise<any>{
+        async signup(input:Account): Promise<any>{
             return {
                 accountId: crypto.randomUUID()
             }
         }
     }
-    const wrapper = mount(AppVue, {
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway
@@ -130,11 +131,11 @@ test("deve criar um passageiro usando fake", async function () {
 
 test("não deve criar um passageiro se nome invalido usando fake", async function () {
     const rideGateway: RideGateway = {
-        async signup(input:any): Promise<any>{
+        async signup(input:Account): Promise<any>{
             throw new Error("Invalid name")
         }
     }
-    const wrapper = mount(AppVue, {
+    const wrapper = mount(SignupView, {
         global: {
             provide: { 
                 rideGateway
@@ -144,7 +145,7 @@ test("não deve criar um passageiro se nome invalido usando fake", async functio
     expect(wrapper.get(".signup-title").text()).toBe("Signup");
 
     wrapper.get(".signup-email").setValue(`john.doe${Math.random()}@gmail.com`);
-    wrapper.get(".signup-cpf").setValue("12312312312");
+    wrapper.get(".signup-cpf").setValue("95818705552");
     wrapper.get(".signup-is-passenger").setValue(true);
 
     await wrapper.get(".signup-submit").trigger("click");
