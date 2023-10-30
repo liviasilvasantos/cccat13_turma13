@@ -1,10 +1,10 @@
 import { mount } from "@vue/test-utils";
-import SignupView from "../src/view/SignupView.vue";
-import RideGatewayHttp from '../src/infra/gateway/RideGatewayHttp';
-import RideGateway from "../src/infra/gateway/RideGateway";
-import AxiosAdapter from "../src/infra/gateway/http/AxiosAdapter";
-import FetchAdapter from "../src/infra/gateway/http/FetchAdapter";
-import Account from "../src/domain/Account";
+import SignupView from "../../src/view/SignupView.vue";
+import RideGatewayHttp from '../../src/infra/gateway/RideGatewayHttp';
+import RideGateway from "../../src/infra/gateway/RideGateway";
+import AxiosAdapter from "../../src/infra/gateway/http/AxiosAdapter";
+import FetchAdapter from "../../src/infra/gateway/http/FetchAdapter";
+import Account from "../../src/domain/Account";
 
 function sleep (time: number) {
 	return new Promise((resolve) => {

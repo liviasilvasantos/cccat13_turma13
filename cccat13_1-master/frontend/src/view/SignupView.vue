@@ -28,10 +28,10 @@ async function signup() {
 <template>
   <div>
     <h2 class="signup-title">Signup</h2>
-    <input class="signup-name" type="text" v-model="account.name" />
-    <input class="signup-email" type="text" v-model="account.email" />
-    <input class="signup-cpf" type="text" v-model="account.cpf" />
-    <input class="signup-is-passenger" type="checkbox" v-model="account.isPassenger" />
+    <input class="signup-name" type="text" v-model="account.name" placeholder="Name"/>
+    <input class="signup-email" type="text" v-model="account.email" placeholder="Email"/>
+    <input class="signup-cpf" type="text" v-model="account.cpf" placeholder="CPF"/>
+    Is passenger: <input class="signup-is-passenger" type="checkbox" v-model="account.isPassenger"/>
     <button class="signup-submit" @click="signup()">Submit</button>
     <span v-if="accountId" class="signup-account-id">{{ accountId }}</span>
     <span class="signup-error">{{ error }}</span>

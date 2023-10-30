@@ -11,4 +11,9 @@ export default class RideGatewayHttp implements RideGateway {
         return output;
     }
 
+    async requestRide(input: any): Promise<any> {
+        const output = this.httpClient.post("http://localhost:3000/request_ride", input);
+        return output;
+    }
+
 }
