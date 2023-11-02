@@ -23,6 +23,6 @@ const getRide = new GetRide(rideRepository);
 
 const httpServer = new ExpressAdapter();
 new MainController(httpServer, signup, getAccount, requestRide, getRide, acceptRide);
-httpServer.listen(3000);
 
+httpServer.listen(3000);
 // port
