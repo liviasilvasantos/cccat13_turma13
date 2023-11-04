@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { inject, ref } from "vue";
+import { inject, onMounted, ref } from "vue";
 import RideGateway from '../infra/gateway/RideGateway';
 
 const ride: any = ref({
@@ -25,6 +25,13 @@ async function submit() {
         error.value = e.message;
     }
 }
+
+onMounted(() => {
+    navigator.geolocation.getCurrentPosition(function (position: any){
+        ride.value.from.lat = position.coords.latitude;
+        ride.value.from.long = position.coords.longitude;
+    });
+});
 </script>
 
 <template>
