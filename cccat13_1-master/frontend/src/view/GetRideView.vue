@@ -20,9 +20,15 @@ async function submit() {
 <template>
     <div>
         <h2 class="get-ride-title">Get Ride</h2>
-        <input type="text" class="get-ride-ride-id" v-model="rideId" placeholder="Passenger ID" />
+        <input type="text" class="get-ride-ride-id" v-model="rideId" placeholder="Ride ID" />
         <button class="get-ride-submit" @click="submit()">Submit</button>
-        <span class="get-ride-passenger-id">{{ ride.passengerId }}</span>
-        <span class="get-ride-status">{{ ride.status }}</span>
+        <span v-if="ride">
+            <span class="get-ride-passenger-id">{{ ride.passengerId }}</span>
+			<span class="get-ride-passenger-name">{{ ride.passenger.name }}</span>
+			<span class="get-ride-passenger-email">{{ ride.passenger.email }}</span>
+			<span class="get-ride-passenger-cpf">{{ ride.passenger.cpf }}</span>
+			<span class="get-ride-status">{{ ride.status }}</span>
+        </span>
+        <span v-if="error" class="request-ride-error">{{ error }}</span>
     </div>
 </template>

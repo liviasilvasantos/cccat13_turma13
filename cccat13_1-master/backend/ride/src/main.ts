@@ -19,7 +19,7 @@ const signup = new Signup(accountRepository);
 const requestRide = new RequestRide(rideRepository, accountRepository);
 const acceptRide = new AcceptRide(rideRepository, accountRepository);
 const getAccount = new GetAccount(accountRepository);
-const getRide = new GetRide(rideRepository);
+const getRide = new GetRide(rideRepository, accountRepository);
 
 const httpServer = new ExpressAdapter();
 new MainController(httpServer, signup, getAccount, requestRide, getRide, acceptRide);

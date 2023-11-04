@@ -34,7 +34,6 @@ test("deve solicitar uma corrida", async function () {
     await wrapperSignupView.get(".signup-submit").trigger("click");
     await sleep(200);
     const accountId = wrapperSignupView.get(".signup-account-id").text();
-    console.log(accountId);
 
     const wrapperRequestRideView = mount(RequestRideView, {
         global: {
@@ -52,18 +51,20 @@ test("deve solicitar uma corrida", async function () {
     await wrapperRequestRideView.get(".request-ride-submit").trigger("click");
     await sleep(200);
     const rideId = wrapperRequestRideView.get(".request-ride-ride-id").text();
+    console.log('rideId', rideId);
+    
     const wrapperGetRideView = mount(GetRideView, {
         global: {
-            provide: {
-                rideGateway: new RideGatewayHttp(new AxiosAdapter())
+            provide: { 
+                rideGateway: new RideGatewayHttp(httpClient)
             }
         }
     });
     wrapperGetRideView.get(".get-ride-ride-id").setValue(rideId);
     await wrapperGetRideView.get(".get-ride-submit").trigger("click");
     await sleep(200);
-
-    console.log(wrapperGetRideView.get(".get-ride-status").text());
-    
+    expect(wrapperGetRideView.get(".get-ride-title").text()).toBe("Get Ride");
+    expect(wrapperGetRideView.get(".get-ride-passenger-name").text()).toBe("John Doe");
+	expect(wrapperGetRideView.get(".get-ride-status").text()).toBe("requested");
 });
 

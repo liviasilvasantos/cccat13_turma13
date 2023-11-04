@@ -28,6 +28,8 @@ export default class MainController {
 
         httpServer.on("get", "/rides/:rideId", async function (params: any, body: any) {
             const output = await getRide.execute(params.rideId);
+            console.log(output);
+            
             return output;
         });
 

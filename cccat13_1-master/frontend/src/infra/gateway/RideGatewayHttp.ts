@@ -17,7 +17,7 @@ export default class RideGatewayHttp implements RideGateway {
     }
 
     async getRide(rideId: string): Promise<any> {
-        const output = this.httpClient.get("http://localhost:3000/rides/", rideId);
+        const output = this.httpClient.get(`http://localhost:3000/rides/${rideId}`);
         return output;
     }
 }
