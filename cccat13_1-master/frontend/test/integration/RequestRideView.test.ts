@@ -7,6 +7,7 @@ import RideGateway from "../../src/infra/gateway/RideGateway";
 import AxiosAdapter from "../../src/infra/gateway/http/AxiosAdapter";
 import FetchAdapter from "../../src/infra/gateway/http/FetchAdapter";
 import Account from "../../src/domain/Account";
+import GeolocationGateway from "../../src/infra/gateway/GeolocationGateway";
 
 function sleep (time: number) {
 	return new Promise((resolve) => {
@@ -35,10 +36,19 @@ test("deve solicitar uma corrida", async function () {
     await sleep(200);
     const accountId = wrapperSignupView.get(".signup-account-id").text();
 
+    const geolocationGateway: GeolocationGateway = {
+        async getGeolocation(): Promise<any> {
+            return {
+                lat: -22.818439,
+                long: -47.064721
+            };
+        }
+    }
     const wrapperRequestRideView = mount(RequestRideView, {
         global: {
             provide: { 
-                rideGateway: new RideGatewayHttp(httpClient)
+                rideGateway: new RideGatewayHttp(httpClient),
+                geolocationGateway: geolocationGateway
             }
         }
     });

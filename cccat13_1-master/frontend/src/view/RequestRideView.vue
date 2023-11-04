@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { inject, onMounted, ref } from "vue";
 import RideGateway from '../infra/gateway/RideGateway';
+import GeolocationGateway from '../infra/gateway/GeolocationGateway';
 
 const ride: any = ref({
     passenderId: "",
@@ -16,6 +17,7 @@ const ride: any = ref({
 const rideId = ref("");
 const error = ref("");
 const rideGateway = inject("rideGateway") as RideGateway;
+const geolocationGateway = inject("geolocationGateway") as GeolocationGateway;
 
 async function submit() {
     try {
@@ -26,11 +28,10 @@ async function submit() {
     }
 }
 
-onMounted(() => {
-    navigator.geolocation.getCurrentPosition(function (position: any){
-        ride.value.from.lat = position.coords.latitude;
-        ride.value.from.long = position.coords.longitude;
-    });
+onMounted(async () => {
+    const coords = await geolocationGateway.getGeolocation();
+    ride.value.from.lat = coords.lat;
+    ride.value.from.long = coords.long;
 });
 </script>
 
